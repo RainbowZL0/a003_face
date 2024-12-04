@@ -48,8 +48,8 @@ LOSS_FUNC_SWAP = True
 LOSS_FUNC_USING_SELF_DEFINED = False
 LOSS_FUNC_WEIGHT_D_AN_PENALTY = 0
 
-FASTAPI_UPLOAD_IMAGE_FOLDER = r"./a004_main/a004_fastapi/a000_upload_images"
-FASTAPI_CROP_IMAGE_FOLDER = r"./a004_main/a004_fastapi/a001_crop"
+FASTAPI_UPLOAD_IMAGE_FOLDER = r"./a004_main/a004_fastapi/a001_upload_images"
+FASTAPI_CROP_IMAGE_FOLDER = r"./a004_main/a004_fastapi/a002_crop"
 FASTAPI_DEVICE = "cpu"
 FASTAPI_USING_DETECTION_METHOD = "opencv"  # deepface or opencv
 FASTAPI_PORT = 8092
