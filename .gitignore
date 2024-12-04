@@ -1,0 +1,10 @@
+/a000_DATASET/*
+/.idea
+/a004_main/a003_training/saved_history/models/*
+**/__pycache__/
+/a004_main/a003_training/runs/*
+/.env
+/a004_main/a004_fastapi/a000_upload_images/*
+/a004_main/a004_fastapi/a001_crop/*
+**/*.tar.gz
+/a004_main/a004_fastapi/a003_logs/log.json
