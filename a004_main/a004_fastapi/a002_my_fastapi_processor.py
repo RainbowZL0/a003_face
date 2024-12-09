@@ -170,7 +170,9 @@ class MyFastapiProcessor:
 
         # 输出处理完成的日志
         LOGGER.info(
-            Fore.LIGHTGREEN_EX + f"Image pair done.\n{pprint.pformat(log_dict)}"
+            Fore.LIGHTGREEN_EX +
+            f"Image pair done.\n"
+            f"{json.dumps(log_dict, ensure_ascii=False, indent=4,)}"
         )
 
         return result_dict
