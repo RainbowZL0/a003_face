@@ -35,6 +35,7 @@ from a004_main.a001_utils.a000_CONFIG import (
     LOSS_FUNC_SWAP,
     LOSS_FUNC_WEIGHT_D_AN_PENALTY,
     LOSS_FUNC_USING_SELF_DEFINED,
+    TRAINING_USING_GRAY_IMAGE,
 )
 from a004_main.a001_utils.a002_general_utils import (
     my_collate_fn_factory,
@@ -607,6 +608,10 @@ def _get_transform(whether_use_augmentation_for_training):
     if whether_use_augmentation_for_training:
         list_for_compose.append(
             v2.RandomHorizontalFlip()
+        )
+    if TRAINING_USING_GRAY_IMAGE:
+        list_for_compose.append(
+            v2.Grayscale()
         )
     return v2.Compose(list_for_compose)
 

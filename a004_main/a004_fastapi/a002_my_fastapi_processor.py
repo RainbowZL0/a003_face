@@ -23,7 +23,6 @@ from a004_main.a001_utils.a000_CONFIG import (
     FASTAPI_UPLOAD_IMAGE_FOLDER,
     LOGGER,
     LOAD_FROM_STATE_PATH,
-    TRAINING_OR_VALI_DEVICE,
     DISTANCE_THRESHOLD,
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
@@ -327,7 +326,10 @@ def build_model_and_load_my_state_for_fastapi():
         Fore.LIGHTGREEN_EX
         + f"Building model and loading state for FastAPI, from {LOAD_FROM_STATE_PATH}."
     )
-    read_state = torch.load(LOAD_FROM_STATE_PATH, map_location=TRAINING_OR_VALI_DEVICE)
+    read_state = torch.load(
+        LOAD_FROM_STATE_PATH,
+        map_location=FASTAPI_DEVICE,
+    )
 
     model = InceptionResnetV1(pretrained="vggface2").to(device=FASTAPI_DEVICE)
     model.load_state_dict(state_dict=read_state["model_state"])

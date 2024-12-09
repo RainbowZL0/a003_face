@@ -24,7 +24,7 @@ def start_main_train():
         probability_for_mod_choices_for_training_dict=None,
         whether_build_cropped_dataset=False,
     )
-    # my_training_obj = MyTrainingObj(dataset_for_training_and_vali)
+    my_training_obj = MyTrainingObj(dataset_for_training_and_vali)
     # my_training_obj.start_train_and_vali()
     # my_training_obj.load_my_state()
 

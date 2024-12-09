@@ -34,6 +34,7 @@ TRAINING_BATCH_SIZE = 64
 TRAINING_PRINT_INFO_INTERVAL_IN_ITERS = 1
 TRAINING_SAVE_MODEL_TO_FOLDER = "./a004_main/a003_training/saved_history/models"
 TRAINING_VALI_SET_RATIO = 0.1
+TRAINING_USING_GRAY_IMAGE = True
 
 WHETHER_USING_SAVED_STATE = True
 LOAD_FROM_STATE_PATH = r"./a004_main/a003_training/saved_history/models/11-12-10-17_epochs-5_iters-up-to-now-780.pth"
