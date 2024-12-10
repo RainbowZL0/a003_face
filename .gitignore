@@ -6,18 +6,18 @@
 
 /a000_DATASET/*
 
-/a004_main/a003_training/saved_history/models/*
-/a004_main/a003_training/runs/*
+/a002_main/a003_training/saved_history/models/*
+/a002_main/a003_training/runs/*
 
-/a004_main/a004_fastapi/a001_images/a001_upload_images/*
-/a004_main/a004_fastapi/a001_images/a002_crop/*
-/a004_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/*
-/a004_main/a004_fastapi/a001_images/a004_upload_images_gray/*
-/a004_main/a004_fastapi/a001_images/a005_crop_gray/*
-/a004_main/a004_fastapi/a003_logs/log.json
+/a002_main/a004_fastapi/a001_images/a001_upload_images/*
+/a002_main/a004_fastapi/a001_images/a002_crop/*
+/a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/*
+/a002_main/a004_fastapi/a001_images/a004_upload_images_gray/*
+/a002_main/a004_fastapi/a001_images/a005_crop_gray/*
+/a002_main/a004_fastapi/a003_logs/log.json
 
-!a004_main/a004_fastapi/a001_images/a001_upload_images/.gitkeep
-!a004_main/a004_fastapi/a001_images/a002_crop/.gitkeep
-!a004_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/.gitkeep
-!a004_main/a004_fastapi/a001_images/a004_upload_images_gray/.gitkeep
-!a004_main/a004_fastapi/a001_images/a005_crop_gray/.gitkeep
+!a002_main/a004_fastapi/a001_images/a001_upload_images/.gitkeep
+!a002_main/a004_fastapi/a001_images/a002_crop/.gitkeep
+!a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/.gitkeep
+!a002_main/a004_fastapi/a001_images/a004_upload_images_gray/.gitkeep
+!a002_main/a004_fastapi/a001_images/a005_crop_gray/.gitkeep
