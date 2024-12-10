@@ -6,7 +6,7 @@ import colored_traceback
 
 colored_traceback.add_hook()
 
-API_URL = rf"http://172.29.248.181:{FASTAPI_PORT}"
+API_URL = rf"http://127.0.0.1:{FASTAPI_PORT}"
 BASE64_TXT_PATH_0 = r"./a004_main/a004_fastapi/a002_base64_post_test/base64/p1_0.txt"
 BASE64_TXT_PATH_1 = r"./a004_main/a004_fastapi/a002_base64_post_test/base64/p2_0.txt"
 

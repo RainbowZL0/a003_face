@@ -25,13 +25,13 @@ def start_main_train():
         whether_build_cropped_dataset=False,
     )
     my_training_obj = MyTrainingObj(dataset_for_training_and_vali)
-    # my_training_obj.start_train_and_vali()
-    # my_training_obj.load_my_state()
 
-    # lst, _ = my_training_obj.vali()
-    # analyze_detailed_result_to_get_cosine_similarity_distribution(
-    #     detailed_result_list=lst
-    # )
+    my_training_obj.start_train_and_vali()
+
+    # my_training_obj.load_my_state()
+    # my_training_obj.high_level_api_for_vali_and_analyze()
+
+
 
     # analyze_detailed_result_to_get_cosine_similarity_distribution(
     #     detailed_result_json_path=os.path.join(VALI_LOG_FOLDER, VALI_ANALYZE_USING_DETAILED_RESULT_JS_NAME)

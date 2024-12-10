@@ -211,9 +211,9 @@ class DatasetForTrainingAndVali(Dataset):
                 Fore.GREEN +
                 "未传入probability_for_mod_choices_dict，将使用初始值。")
             self.probability_for_mod_choices_for_training_dict = {
-                "diff-mod": 0.7,
-                "vis": 0.2,
-                "infrared": 0.1,
+                "diff-mod": 0.94,
+                "vis": 0.03,
+                "infrared": 0.03,
             }
         else:
             if sum(self.probability_for_mod_choices_for_training_dict.values()) != 1:

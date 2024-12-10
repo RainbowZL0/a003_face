@@ -110,7 +110,7 @@ def build_dataset_for_test():
 
 
 def get_time_str():
-    return datetime.now().strftime("%m-%d-%H-%M")
+    return datetime.now().strftime("%m-%d-%H-%M-%S")
 
 
 def loss_penalty_func_for_d_an(x):

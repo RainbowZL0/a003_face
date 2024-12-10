@@ -1,3 +1,4 @@
+import os.path
 from pathlib import Path
 from textwrap import dedent
 
@@ -35,7 +36,7 @@ from a004_main.a001_utils.a000_CONFIG import (
     LOSS_FUNC_SWAP,
     LOSS_FUNC_WEIGHT_D_AN_PENALTY,
     LOSS_FUNC_USING_SELF_DEFINED,
-    TRAINING_USING_GRAY_IMAGE,
+    TRAINING_USING_GRAY_IMAGE, TRAINING_TENSOR_BOARD_LOG_DIR,
 )
 from a004_main.a001_utils.a002_general_utils import (
     my_collate_fn_factory,
@@ -91,7 +92,10 @@ class MyTrainingObj:
             )
 
         # tensorboard
-        self.tensorboard_writer = SummaryWriter()
+        tensorboard_log_dir_for_this_run = os.path.join(TRAINING_TENSOR_BOARD_LOG_DIR, get_time_str())
+        self.tensorboard_writer = SummaryWriter(
+            log_dir=str(tensorboard_log_dir_for_this_run),
+        )
 
         # iter和epoch记录
         self.current_epochs = 0  # 取值范围 [0, 总epoch数)
@@ -119,6 +123,7 @@ class MyTrainingObj:
             self.current_epochs = epoch
             self.__train_for_one_epoch_with_vali()
             if (epoch + 1) % TRAINING_SAVE_MODEL_INTERVAL_IN_EPOCHS == 0:
+                self.high_level_api_for_vali_and_analyze()
                 self.save_my_state()
         self.tensorboard_writer.close()
 
@@ -196,10 +201,13 @@ class MyTrainingObj:
 
             # 训练过程中，每指定的iters过后，进行validation
             if self.iters_up_to_now % TRAINING_VALI_INTERVAL_IN_ITERS == 0:
-                detailed_result_list, detailed_result_list_save_to_json_path = self.vali()
-                analyze_detailed_result_to_get_cosine_similarity_distribution(
-                    detailed_result_list=detailed_result_list,
-                )
+                self.high_level_api_for_vali_and_analyze()
+
+    def high_level_api_for_vali_and_analyze(self):
+        detailed_result_list, detailed_result_list_save_to_json_path = self.vali()
+        analyze_detailed_result_to_get_cosine_similarity_distribution(
+            detailed_result_list=detailed_result_list,
+        )
 
     def vali(self):
         """
@@ -610,8 +618,9 @@ def _get_transform(whether_use_augmentation_for_training):
             v2.RandomHorizontalFlip()
         )
     if TRAINING_USING_GRAY_IMAGE:
-        list_for_compose.append(
-            v2.Grayscale()
+        list_for_compose.insert(
+            1,
+            v2.Grayscale(num_output_channels=3),
         )
     return v2.Compose(list_for_compose)
 

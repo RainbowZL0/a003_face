@@ -26,20 +26,27 @@ from a004_main.a001_utils.a000_CONFIG import (
     DISTANCE_THRESHOLD,
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
-    FASTAPI_USING_DETECTION_METHOD,
+    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE,
 )
 from a004_main.a001_utils.a002_general_utils import my_distance_func
+
+
+def get_fastapi_transform():
+    trans_list = [
+        v2.ToImage(),  # ndarray HWC -> tensor CHW, dtype不变
+        v2.ToDtype(torch.float32),
+        v2.Resize((160, 160)),
+        v2.Normalize(mean=(127.5, 127.5, 127.5), std=(128, 128, 128)),
+    ]
+    if FASTAPI_USING_GRAY_IMAGE:
+        trans_list.insert(2, v2.Grayscale(num_output_channels=3))
+    return v2.Compose(trans_list)
 
 
 class MyFastapiProcessor:
     def __init__(self):
         self.model = build_model_and_load_my_state_for_fastapi()
-        self.transform = v2.Compose([
-            v2.ToImage(),  # ndarray HWC -> tensor CHW, dtype不变
-            v2.ToDtype(torch.float32),
-            v2.Resize((160, 160)),
-            v2.Normalize(mean=(127.5, 127.5, 127.5), std=(128, 128, 128)),
-        ])
+        self.transform = get_fastapi_transform()
 
         if FASTAPI_USING_DETECTION_METHOD == "deepface":
             from deepface.DeepFace import extract_faces
