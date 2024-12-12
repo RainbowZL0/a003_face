@@ -53,17 +53,13 @@ def calculate_png_num_in_folder(folder_path):
     return len(lst)
 
 
-if __name__ == '__main__':
+def start():
     remove_duplicated(
         source_dir=SOURCE_DIR,
         whether_move_to_new_dir=True,
         move_to_dir=MOVE_TO_DIR,
     )
-    remove_duplicated(
-        source_dir=MOVE_TO_DIR,
-        whether_move_to_new_dir=False,
-        move_to_dir=None,
-    )
+    remove_duplicated(source_dir=MOVE_TO_DIR, whether_move_to_new_dir=False, move_to_dir=None)
     print(
         f"\n"
         f"Everything done.\n"
@@ -71,3 +67,6 @@ if __name__ == '__main__':
         f"Num of pngs in {MOVE_TO_DIR} = {calculate_png_num_in_folder(MOVE_TO_DIR)}."
     )
 
+
+if __name__ == '__main__':
+    start()
