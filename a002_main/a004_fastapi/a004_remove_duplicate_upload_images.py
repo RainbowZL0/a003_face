@@ -1,5 +1,5 @@
 import os
-import glob
+from glob import glob
 import shutil
 from collections import defaultdict
 from pathlib import Path
@@ -13,7 +13,7 @@ os.makedirs(MOVE_TO_DIR, exist_ok=True)
 
 
 def get_group_dict_with_hash_as_key_from_image_dir(source_dir):
-    image_paths = glob.glob(os.path.join(source_dir, '*.png'))
+    image_paths = glob(os.path.join(source_dir, '*.png'))
 
     # 用hash值分组
     hash_groups = defaultdict(list)
@@ -48,6 +48,11 @@ def remove_duplicated(source_dir, whether_move_to_new_dir, move_to_dir):
                 print(f'Moved to {move_to_dir}: {os.path.basename(source_file)}')
 
 
+def calculate_png_num_in_folder(folder_path):
+    lst = glob(pathname="*.png", root_dir=folder_path)
+    return len(lst)
+
+
 if __name__ == '__main__':
     remove_duplicated(
         source_dir=SOURCE_DIR,
@@ -58,5 +63,11 @@ if __name__ == '__main__':
         source_dir=MOVE_TO_DIR,
         whether_move_to_new_dir=False,
         move_to_dir=None,
+    )
+    print(
+        f"\n"
+        f"Everything done.\n"
+        f"Num of pngs in {SOURCE_DIR} = {calculate_png_num_in_folder(SOURCE_DIR)}.\n"
+        f"Num of pngs in {MOVE_TO_DIR} = {calculate_png_num_in_folder(MOVE_TO_DIR)}."
     )
 
