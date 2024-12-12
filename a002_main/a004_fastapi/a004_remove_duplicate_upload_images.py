@@ -52,7 +52,6 @@ def remove_duplicated(source_dir, whether_move_to_new_dir, move_to_dir):
                 )
                 shutil.move(source_file, target_file)
                 print(f"Moved to {move_to_dir}: {os.path.basename(source_file)}")
-    return
 
 
 def calculate_png_num_in_folder(folder_path):
