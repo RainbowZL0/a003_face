@@ -7,6 +7,9 @@
 
 /a000_DATASET/*
 
+/a001_test/a003_facenet/a001_mtcnn_success_crop/*
+/a001_test/a003_facenet/a002_fail_crop/*
+
 /a002_main/a003_training/saved_history/models/*
 /a002_main/a003_training/runs/*
 
@@ -16,6 +19,10 @@
 /a002_main/a004_fastapi/a001_images/a004_upload_images_gray/*
 /a002_main/a004_fastapi/a001_images/a005_crop_gray/*
 /a002_main/a004_fastapi/a003_logs/*
+
+
+!a001_test/a003_facenet/a001_mtcnn_success_crop/.gitkeep
+!a001_test/a003_facenet/a002_fail_crop/.gitkeep
 
 !a002_main/a004_fastapi/a001_images/a001_upload_images/.gitkeep
 !a002_main/a004_fastapi/a001_images/a002_crop/.gitkeep
