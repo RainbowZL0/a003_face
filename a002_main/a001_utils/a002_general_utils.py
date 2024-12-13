@@ -6,6 +6,7 @@ from glob import glob
 from typing import Any, Dict, List
 
 import cv2
+import natsort
 import torch
 from matplotlib import pyplot as plt
 from torch.nn import functional
@@ -131,7 +132,7 @@ def glob_png_paths_in_folder(image_folder):
         pathname=os.path.join(image_folder, "*.png"),
         recursive=False
     )
-    return image_path_list
+    return natsort.natsorted(image_path_list)
 
 
 def read_image_path_as_hwc_bgr_uint8(image_path):
