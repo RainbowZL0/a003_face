@@ -15,9 +15,11 @@
 /a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/*
 /a002_main/a004_fastapi/a001_images/a004_upload_images_gray/*
 /a002_main/a004_fastapi/a001_images/a005_crop_gray/*
+/a002_main/a004_fastapi/a003_logs/*
 
 !a002_main/a004_fastapi/a001_images/a001_upload_images/.gitkeep
 !a002_main/a004_fastapi/a001_images/a002_crop/.gitkeep
 !a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat/.gitkeep
 !a002_main/a004_fastapi/a001_images/a004_upload_images_gray/.gitkeep
 !a002_main/a004_fastapi/a001_images/a005_crop_gray/.gitkeep
+!a002_main/a004_fastapi/a003_logs/.gitkeep
