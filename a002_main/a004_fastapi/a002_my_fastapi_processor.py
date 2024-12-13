@@ -236,8 +236,8 @@ class MyFastapiProcessor:
             else:
                 (x, y, w, h) = faces[0]
                 face_array = arr[y: y + h, x: x + w, :]
-                plt.imshow(cv2.cvtColor(face_array, cv2.COLOR_BGR2RGB))
-                plt.show()
+                # plt.imshow(cv2.cvtColor(face_array, cv2.COLOR_BGR2RGB))
+                # plt.show()
                 return face_array
         else:
             raise ValueError(

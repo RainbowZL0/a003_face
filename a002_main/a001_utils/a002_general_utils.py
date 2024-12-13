@@ -1,8 +1,11 @@
 import json
 import math
+import os
 from datetime import datetime
+from glob import glob
 from typing import Any, Dict, List
 
+import cv2
 import torch
 from matplotlib import pyplot as plt
 from torch.nn import functional
@@ -122,3 +125,15 @@ def my_distance_func(tensor_0, tensor_1) -> torch.Tensor:
     假设tensor的形状为 batch x feature_dim，返回tensor形状将是只有一维，长度为batch
     """
     return 1 - functional.cosine_similarity(tensor_0, tensor_1)
+
+def glob_png_paths_in_folder(image_folder):
+    image_path_list = glob(
+        pathname=os.path.join(image_folder, "*.png"),
+        recursive=False
+    )
+    return image_path_list
+
+
+def read_image_path_as_hwc_bgr_uint8(image_path):
+    image_array = cv2.imread(image_path)
+    return image_array
