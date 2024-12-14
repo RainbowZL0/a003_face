@@ -14,6 +14,7 @@ SUCCESS_CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a001_mtcnn_success_crop"
 FAIL_CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a002_fail_crop"
 mtcnn = MTCNN(thresholds=[0.4, 0.5, 0.5])
 
+
 def start():
     image_paths_list = glob_png_paths_in_folder(
         image_folder=IMAGE_FOLDER
@@ -37,10 +38,12 @@ def start():
             rst_array = (rst_array * 128 + 127.5).astype(np.uint8)
 
             success_crop_image_paths_list.append(image_path)
-            plt.imsave(
-                fname=os.path.join(SUCCESS_CROP_IMAGE_FOLDER, os.path.basename(image_path)),
-                arr=rst_array,
-            )
+
+            # plt.imsave(
+            #     fname=os.path.join(SUCCESS_CROP_IMAGE_FOLDER, os.path.basename(image_path)),
+            #     arr=rst_array,
+            # )
+
             # plt.imshow(rst_array)
             # plt.axis("off")
             # plt.show()
@@ -48,11 +51,11 @@ def start():
 
         else:
             fail_crop_image_paths_list.append(image_path)
-            shutil.copyfile(
-                src=image_path,
-                dst=os.path.join(FAIL_CROP_IMAGE_FOLDER, os.path.basename(image_path)),
-            )
 
+            # shutil.copyfile(
+            #     src=image_path,
+            #     dst=os.path.join(FAIL_CROP_IMAGE_FOLDER, os.path.basename(image_path)),
+            # )
 
     print(
         f"fails: {len(fail_crop_image_paths_list)} / {len(image_paths_list)}"
