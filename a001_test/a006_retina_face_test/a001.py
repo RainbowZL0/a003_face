@@ -24,5 +24,9 @@ def start():
         image_array: np.ndarray
         image_array = np.tile(image_array, (1, 1, 3))  # hwc, gray, channels=3, uint8
 
-        image_tensor = torch.from_numpy(image_array)
-        annotation = model.predict_jsons(image_tensor)
+        annotation = model.predict_jsons(image_array)
+        pass
+
+
+if __name__ == '__main__':
+    start()
