@@ -2,7 +2,6 @@ import base64
 import datetime
 import hashlib
 import json
-import pprint
 from io import BytesIO
 from pathlib import Path
 from typing import no_type_check
@@ -29,18 +28,6 @@ from a002_main.a001_utils.a000_CONFIG import (
     FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE,
 )
 from a002_main.a001_utils.a002_general_utils import my_distance_func
-
-
-def get_fastapi_transform():
-    trans_list = [
-        v2.ToImage(),  # ndarray HWC -> tensor CHW, dtype不变
-        v2.ToDtype(torch.float32),
-        v2.Resize((160, 160)),
-        v2.Normalize(mean=(127.5, 127.5, 127.5), std=(128, 128, 128)),
-    ]
-    if FASTAPI_USING_GRAY_IMAGE:
-        trans_list.insert(2, v2.Grayscale(num_output_channels=3))
-    return v2.Compose(trans_list)
 
 
 class MyFastapiProcessor:
@@ -82,7 +69,11 @@ class MyFastapiProcessor:
 
         # face in face_array_list is HWC, BGR, uint8
         face_array_list = [
-            self.crop_face_from_img_to_hwc_bgr_uint8(arr_i) for arr_i in img_arr_list
+            self.crop_face_from_img(
+                arr_i,
+                fastapi_using_detection_method=FASTAPI_USING_DETECTION_METHOD
+            )
+            for arr_i in img_arr_list
         ]
 
         # 保存crop图片看看人脸位置是否准确
@@ -109,7 +100,7 @@ class MyFastapiProcessor:
         LOGGER.info(
             Fore.LIGHTGREEN_EX
             + f"Image pair '{filename_list[0]}', '{filename_list[1]}' done.\n"
-              f"{pprint.pformat(result_dict)}"
+              f"{json.dumps(result_dict, ensure_ascii=False)}"
         )
 
         return result_dict
@@ -138,7 +129,11 @@ class MyFastapiProcessor:
             )
 
         face_arr_list = [
-            self.crop_face_from_img_to_hwc_bgr_uint8(img_i) for img_i in img_arr_list
+            self.crop_face_from_img(
+                img_i,
+                fastapi_using_detection_method=FASTAPI_USING_DETECTION_METHOD,
+            )
+            for img_i in img_arr_list
         ]
         for i in range(2):
             save_hwc_bgr_to_png(
@@ -178,7 +173,7 @@ class MyFastapiProcessor:
         LOGGER.info(
             Fore.LIGHTGREEN_EX +
             f"Image pair done.\n"
-            f"{json.dumps(log_dict, ensure_ascii=False, indent=4,)}"
+            f"{json.dumps(log_dict, ensure_ascii=False, indent=4, )}"
         )
 
         return result_dict
@@ -196,13 +191,18 @@ class MyFastapiProcessor:
             distance = my_distance_func(tensor_0=out_0, tensor_1=out_1).item()
         return round(distance, 5)
 
-    def crop_face_from_img_to_hwc_bgr_uint8(self, arr: np.ndarray):
+    def crop_face_from_img(
+            self,
+            arr: np.ndarray,
+            fastapi_using_detection_method,
+    ):
         """
         arr: np_hwc_bgr_uint8
         return:
             np_hwc_bgr_uint8
         """
-        if FASTAPI_USING_DETECTION_METHOD == "deepface":
+        # TODO 增加对灰阶图片的detection以及后续的embedding
+        if fastapi_using_detection_method == "deepface":
             try:
                 face_dict_list = self.deepface_extract_faces(
                     img_path=arr,
@@ -220,7 +220,7 @@ class MyFastapiProcessor:
                 face_array = face_dict_list[0]["face"]
                 face_array *= 255
                 return face_array.astype(np.uint8)
-        elif FASTAPI_USING_DETECTION_METHOD == "opencv":
+        elif fastapi_using_detection_method == "opencv":
             gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)
             faces = self.opencv_face_detector.detectMultiScale(
                 gray,
@@ -245,6 +245,18 @@ class MyFastapiProcessor:
                 f"当前取值为{FASTAPI_USING_DETECTION_METHOD}，"
                 f"支持的取值为'opencv'或'deepface'。"
             )
+
+
+def get_fastapi_transform():
+    trans_list = [
+        v2.ToImage(),  # ndarray HWC -> tensor CHW, dtype不变
+        v2.ToDtype(torch.float32),
+        v2.Resize((160, 160)),
+        v2.Normalize(mean=(127.5, 127.5, 127.5), std=(128, 128, 128)),
+    ]
+    if FASTAPI_USING_GRAY_IMAGE:
+        trans_list.insert(2, v2.Grayscale(num_output_channels=3))
+    return v2.Compose(trans_list)
 
 
 def read_base64_as_np_hwc_bgr_uint8(code_0: str):

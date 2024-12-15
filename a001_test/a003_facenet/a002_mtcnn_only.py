@@ -11,7 +11,7 @@ from a002_main.a001_utils.a002_general_utils import glob_png_paths_in_folder
 
 IMAGE_FOLDER = "a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat"
 SUCCESS_CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a001_mtcnn_success_crop"
-FAIL_CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a002_fail_crop"
+FAIL_CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a002_mtcnn_fail_crop"
 mtcnn = MTCNN(thresholds=[0.4, 0.5, 0.5])
 
 

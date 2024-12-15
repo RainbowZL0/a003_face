@@ -292,7 +292,7 @@ class DatasetForTrainingAndVali(Dataset):
                 continue
             else:
                 # the_first_face: dict {
-                #   "face": ndarray,  # 注意格式是 BGR float HxWxC
+                #   "face": ndarray,  # 注意格式是 RGB float HxWxC
                 #   "facial_area": {},
                 #   "confidence": float,
                 # }
@@ -322,7 +322,7 @@ class DatasetForTrainingAndVali(Dataset):
                     )
                     the_first_face *= 255
                     the_first_face = the_first_face.astype(np.uint8)
-                the_first_face = cv2.cvtColor(src=the_first_face, code=cv2.COLOR_BGR2RGB)
+                the_first_face = cv2.cvtColor(src=the_first_face, code=cv2.COLOR_RGB2BGR)
                 # the_first_face = cv2.normalize(
                 #     src=the_first_face,
                 #     dst=None,
@@ -339,6 +339,7 @@ class DatasetForTrainingAndVali(Dataset):
                 #     axes=axes
                 # )
 
+                # cv2.imwrite()方法会自动把BGR转为RGB
                 cv2.imwrite(filename=str(img_cropped_path), img=the_first_face)
                 print(
                     f"Cropped image saved at {str(img_cropped_path)}.\n"
