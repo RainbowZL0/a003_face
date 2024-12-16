@@ -1,8 +1,9 @@
 import json
+
+import colored_traceback
 import requests
 
 from a002_main.a001_utils.a000_CONFIG import FASTAPI_PORT
-import colored_traceback
 
 colored_traceback.add_hook()
 

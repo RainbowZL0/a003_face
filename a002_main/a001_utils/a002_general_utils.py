@@ -9,9 +9,9 @@ import cv2
 import natsort
 import torch
 from matplotlib import pyplot as plt
-from torch.nn import functional
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from torch.nn import functional
 
 from a002_main.a001_utils.a000_CONFIG import (
     DPI,
@@ -113,8 +113,8 @@ def build_dataset_for_test():
     )
 
 
-def get_time_str():
-    return datetime.now().strftime("%m-%d-%H-%M-%S")
+def get_time_stamp_str():
+    return datetime.now().strftime(format="%Y-%m-%d_%H-%M-%S")
 
 
 def loss_penalty_func_for_d_an(x):
@@ -126,6 +126,7 @@ def my_distance_func(tensor_0, tensor_1) -> torch.Tensor:
     假设tensor的形状为 batch x feature_dim，返回tensor形状将是只有一维，长度为batch
     """
     return 1 - functional.cosine_similarity(tensor_0, tensor_1)
+
 
 def glob_png_paths_in_folder(image_folder):
     image_path_list = glob(

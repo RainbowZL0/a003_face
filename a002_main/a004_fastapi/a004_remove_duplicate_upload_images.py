@@ -1,11 +1,13 @@
 import os
-import time
-from glob import glob
 import shutil
+import time
 from collections import defaultdict
+from glob import glob
 from pathlib import Path
 
 import schedule
+
+from a002_main.a004_fastapi.a002_my_fastapi_processor import get_time_stamp_str
 
 # 使用 glob 获取所有图片文件路径
 SOURCE_DIR = r"a002_main/a004_fastapi/a001_images/a001_upload_images"
@@ -80,18 +82,20 @@ def start():
     )
     print(
         f"\n"
-        f"Everything done.\n"
+        f"Done.\n"
         f"Num of pngs in {SOURCE_DIR} = {calculate_png_num_in_folder(SOURCE_DIR)}.\n"
-        f"Num of pngs in {MOVE_TO_DIR} = {calculate_png_num_in_folder(MOVE_TO_DIR)}."
+        f"Num of pngs in {MOVE_TO_DIR} = {calculate_png_num_in_folder(MOVE_TO_DIR)}.\n"
+        f"Current time: {get_time_stamp_str()}"
     )
 
 
-def start_every_given_seconds(interval=30):
+def start_every_given_seconds(interval=3600):
     schedule.every(interval).seconds.do(start)
+    start()
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 
 if __name__ == "__main__":
-    start_every_given_seconds(30)
+    start_every_given_seconds(3600)

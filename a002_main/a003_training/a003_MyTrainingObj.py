@@ -40,11 +40,10 @@ from a002_main.a001_utils.a000_CONFIG import (
 )
 from a002_main.a001_utils.a002_general_utils import (
     my_collate_fn_factory,
-    get_time_str,
     save_to_json,
     load_json,
     loss_penalty_func_for_d_an,
-    my_distance_func
+    my_distance_func, get_time_stamp_str
 )
 from a002_main.a003_training.a002_DatasetForTraining import DatasetForTrainingAndVali
 
@@ -92,7 +91,10 @@ class MyTrainingObj:
             )
 
         # tensorboard
-        tensorboard_log_dir_for_this_run = os.path.join(TRAINING_TENSOR_BOARD_LOG_DIR, get_time_str())
+        tensorboard_log_dir_for_this_run = os.path.join(
+            TRAINING_TENSOR_BOARD_LOG_DIR,
+            get_time_stamp_str(),
+        )
         self.tensorboard_writer = SummaryWriter(
             log_dir=str(tensorboard_log_dir_for_this_run),
         )
@@ -326,7 +328,7 @@ class MyTrainingObj:
         folder_path_obj = Path(VALI_LOG_FOLDER)
         if not folder_path_obj.exists():
             folder_path_obj.mkdir(parents=True, exist_ok=True)
-        js_file_name_obj = Path(get_time_str() + ".json")
+        js_file_name_obj = Path(get_time_stamp_str() + ".json")
         js_path_obj = folder_path_obj / js_file_name_obj
         save_to_json(obj=detailed_result_list, save_to_path=js_path_obj)
         LOGGER.info(f"验证结果已输出到{str(js_path_obj)}")
@@ -344,7 +346,7 @@ class MyTrainingObj:
         return detailed_result_list, js_path_obj
 
     def save_my_state(self):
-        time_str = get_time_str()
+        time_str = get_time_stamp_str()
         model_file_name = (f"{time_str}_epochs-{self.current_epochs + 1}_"
                            f"iters-up-to-now-{self.iters_up_to_now}.pth")
         save_model_to_folder_obj = Path(TRAINING_SAVE_MODEL_TO_FOLDER)

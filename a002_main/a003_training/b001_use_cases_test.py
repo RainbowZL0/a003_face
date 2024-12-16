@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import torch
 from matplotlib import pyplot as plt
-import seaborn as sns
 from rich.pretty import pprint
 
 from a002_main.a001_utils.a002_general_utils import loss_penalty_func_for_d_an

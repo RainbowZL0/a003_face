@@ -1,11 +1,11 @@
+import colored_traceback
 from colorama import Fore
 from fastapi import FastAPI, UploadFile, File, Body
 from uvicorn import run
-from a002_main.a001_utils.a000_CONFIG import FASTAPI_PORT
-from a002_main.a004_fastapi.a003_class_image_pair_base64 import ImagePairBase64Request
 
+from a002_main.a001_utils.a000_CONFIG import FASTAPI_PORT
 from a002_main.a004_fastapi.a002_my_fastapi_processor import MyFastapiProcessor
-import colored_traceback
+from a002_main.a004_fastapi.a003_class_image_pair_base64 import ImagePairBase64Request
 
 colored_traceback.add_hook()
 

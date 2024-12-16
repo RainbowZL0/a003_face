@@ -1,5 +1,4 @@
 import base64
-import datetime
 import hashlib
 import json
 import traceback
@@ -28,7 +27,7 @@ from a002_main.a001_utils.a000_CONFIG import (
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
     FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, )
-from a002_main.a001_utils.a002_general_utils import my_distance_func
+from a002_main.a001_utils.a002_general_utils import my_distance_func, get_time_stamp_str
 
 
 class MyFastapiProcessor:
@@ -434,10 +433,6 @@ def build_model_and_load_my_state_for_fastapi():
     model = InceptionResnetV1(pretrained="vggface2").to(device=FASTAPI_DEVICE)
     model.load_state_dict(state_dict=read_state["model_state"])
     return model
-
-
-def get_time_stamp_str():
-    return datetime.datetime.now().strftime(format="%Y-%m-%d_%H-%M-%S")
 
 
 def generate_a_pair_of_file_name_from_array(arr_0, arr_1):
