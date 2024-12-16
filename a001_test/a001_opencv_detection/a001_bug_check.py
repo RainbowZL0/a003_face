@@ -1,18 +1,12 @@
-import os.path
-from tqdm import tqdm
-
 import cv2
-from glob import glob
+from tqdm import tqdm
 
 from a002_main.a001_utils.a002_general_utils import (
     glob_png_paths_in_folder,
     read_image_path_as_hwc_bgr_uint8,
 )
 
-IMAGE_FOLDER = r"a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat"
-
-
-
+IMAGE_FOLDER = r"a001_test/a001_opencv_detection/imgs"
 
 
 def start():
@@ -20,8 +14,8 @@ def start():
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
 
-    image_paht_list = glob_png_paths_in_folder(IMAGE_FOLDER)
-    for image_path in tqdm(image_paht_list):
+    image_path_list = glob_png_paths_in_folder(IMAGE_FOLDER)
+    for image_path in tqdm(image_path_list):
         image_array = read_image_path_as_hwc_bgr_uint8(image_path)
         image_array = cv2.cvtColor(image_array, cv2.COLOR_BGR2GRAY)
         try:

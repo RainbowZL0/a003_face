@@ -28,7 +28,7 @@ def start():
             face_dict_list = DeepFace.extract_faces(
                 img_path=cv2.imread(image_path),
                 detector_backend="retinaface",
-                enforce_detection=True,
+                enforce_detection=False,
             )
         except Exception as e:
             print(
@@ -48,6 +48,7 @@ def start():
                     ),
                 )
         else:
+            # TODO 如果没有检测到人脸，则confidence项会等于0，应当改为据此判断是否检测到了人脸；现在是用exception
             # face_dict_list[0]: dict {
             #   "face": ndarray,  # 注意格式是 RGB float HWC 0~1
             #   "facial_area": {},

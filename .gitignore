@@ -7,6 +7,8 @@
 
 /a000_DATASET/*
 
+/a001_test/a001_opencv_detection/imgs/*
+/a001_test/a001_opencv_detection/faces/*
 /a001_test/a003_facenet/a001_mtcnn_success_crop/*
 /a001_test/a003_facenet/a002_mtcnn_fail_crop/*
 /a001_test/a006_retina_face_test/a001_retinaface_success_crop
@@ -23,6 +25,8 @@
 /a002_main/a004_fastapi/a003_logs/*
 
 
+!a001_test/a001_opencv_detection/faces
+!a001_test/a001_opencv_detection/imgs/.gitkeep
 !a001_test/a003_facenet/a001_mtcnn_success_crop/.gitkeep
 !a001_test/a003_facenet/a002_mtcnn_fail_crop/.gitkeep
 !a001_test/a006_retina_face_test/a001_retinaface_success_crop/.gitkeep

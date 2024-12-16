@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
 from matplotlib import pyplot as plt
-from a001_test.a001_opencv_detection.a002_bug_check import (
+
+from a001_test.a001_opencv_detection.a001_bug_check import (
     read_image_path_as_hwc_bgr_uint8,
     glob_png_paths_in_folder,
 )
@@ -87,7 +88,6 @@ def get_aligned_face(image, face_info, size=112):
     aligned_face = align_face(image, landmarks, size)
 
     return aligned_face
-
 
 
 if __name__ == '__main__':

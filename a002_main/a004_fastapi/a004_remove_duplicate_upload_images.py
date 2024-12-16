@@ -1,8 +1,11 @@
 import os
+import time
 from glob import glob
 import shutil
 from collections import defaultdict
 from pathlib import Path
+
+import schedule
 
 # 使用 glob 获取所有图片文件路径
 SOURCE_DIR = r"a002_main/a004_fastapi/a001_images/a001_upload_images"
@@ -19,11 +22,16 @@ def get_group_dict_with_hash_as_key_from_image_dir(source_dir):
 
     # 用hash值分组
     hash_groups = defaultdict(list)
-    for img in image_paths:
+    for image_path in image_paths:
         # glob返回完整路径，所以需要用basename获取文件名
-        filename = Path(img).stem
-        hash_value = filename.split("_")[2]
-        hash_groups[hash_value].append(img)
+        filename = Path(image_path).stem
+        try:
+            hash_value = filename.split("_")[2]
+        except Exception as e:
+            print(f"At {image_path}, an error occurred: {e}")
+            exit(1)
+        else:
+            hash_groups[hash_value].append(image_path)
     return hash_groups
 
 
@@ -78,5 +86,12 @@ def start():
     )
 
 
+def start_every_given_seconds(interval=30):
+    schedule.every(interval).seconds.do(start)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 if __name__ == "__main__":
-    start()
+    start_every_given_seconds(30)

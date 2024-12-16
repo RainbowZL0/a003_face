@@ -2,6 +2,7 @@ import base64
 import datetime
 import hashlib
 import json
+import traceback
 from io import BytesIO
 from pathlib import Path
 from typing import no_type_check
@@ -13,6 +14,7 @@ import torch
 from PIL import Image
 from colorama import Fore
 from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
+from facenet_pytorch.models.mtcnn import MTCNN
 from fastapi import UploadFile, File
 from matplotlib import pyplot as plt
 from torchvision.transforms import v2
@@ -25,8 +27,7 @@ from a002_main.a001_utils.a000_CONFIG import (
     DISTANCE_THRESHOLD,
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
-    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE,
-)
+    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, )
 from a002_main.a001_utils.a002_general_utils import my_distance_func
 
 
@@ -37,11 +38,17 @@ class MyFastapiProcessor:
 
         if FASTAPI_USING_DETECTION_METHOD == "deepface":
             from deepface.DeepFace import extract_faces
-
             self.deepface_extract_faces = extract_faces
         elif FASTAPI_USING_DETECTION_METHOD == "opencv":
             self.opencv_face_detector = cv2.CascadeClassifier(
                 cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+            )
+        elif FASTAPI_USING_DETECTION_METHOD == "mtcnn":
+            self.mtcnn = MTCNN(thresholds=[0.4, 0.5, 0.5])
+        else:
+            raise NotImplementedError(
+                f"FASTAPI_USING_DETECTION_METHOD = {FASTAPI_USING_DETECTION_METHOD}, "
+                f"该取值不受支持。"
             )
 
     def get_image_pair_and_verify_file_version(
@@ -198,53 +205,117 @@ class MyFastapiProcessor:
     ):
         """
         arr: np_hwc_bgr_uint8
+        根据config中选择的方法做detection，分支完成后统一为numpy ndarray hwc bgr uint8。
+        然后在本方法中接着处理是否转为灰阶图片进行后续推理。如果转为灰阶，仍然要保留三个通道，否则无法输入模型。
         return:
             np_hwc_bgr_uint8
         """
         # TODO 增加对灰阶图片的detection以及后续的embedding
         if fastapi_using_detection_method == "deepface":
-            try:
-                face_dict_list = self.deepface_extract_faces(
-                    img_path=arr,
-                    detector_backend="retinaface",
-                )
-            except Exception as e:
-                LOGGER.error(msg=f"{e}")
-            else:
-                # face: dict {
-                #   "face": ndarray,  # 注意格式是 BGR float HxWxC
-                #   "facial_area": {},
-                #   "confidence": float,
-                # }
-                face_array: np.ndarray
-                face_array = face_dict_list[0]["face"]
-                face_array *= 255
-                return face_array.astype(np.uint8)
+            rst_array = self.__crop_face_from_img_based_on_deepface(arr)
         elif fastapi_using_detection_method == "opencv":
-            gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)
+            rst_array = self.__crop_face_from_img_based_on_opencv(arr)
+        elif fastapi_using_detection_method == "mtcnn":
+            rst_array = self.__crop_face_from_img_based_on_mtcnn(arr)
+        else:
+            raise NotImplementedError(
+                f"fastapi_using_detection_method = {fastapi_using_detection_method}, "
+                f"which is not implemented."
+            )
+        if not FASTAPI_USING_GRAY_IMAGE:
+            return rst_array
+        else:
+            gray_array = cv2.cvtColor(rst_array, cv2.COLOR_BGR2GRAY)  # numpy hw uint8
+            gray_array = np.expand_dims(gray_array, axis=2)  # numpy hwc c=1 uint8
+            gray_array = np.tile(gray_array, (1, 1, 3))  # numpy hwc c=3 uint8
+            return gray_array
+
+    def __crop_face_from_img_based_on_deepface(self, arr):
+        """
+        输入numpy hwc bgr uint8，输出结果为numpy hwc rgb float 0~1，然后转为hwc bgr uint8
+        """
+        try:
+            face_dict_list = self.deepface_extract_faces(
+                img_path=arr,
+                detector_backend="retinaface",
+            )
+        except Exception as e:
+            LOGGER.error(
+                f"Error value: {e}\n"
+                f"{traceback.format_exc()}"
+            )
+            return arr
+        else:
+            # face: dict {
+            #   "face": ndarray,  # 注意格式是 RGB float HxWxC
+            #   "facial_area": {},
+            #   "confidence": float,
+            # }
+            face_array: np.ndarray
+            face_array = face_dict_list[0]["face"]
+            face_array *= 255
+            face_array = face_array.astype(np.uint8)
+            return cv2.cvtColor(face_array, cv2.COLOR_RGB2BGR)
+
+    def __crop_face_from_img_based_on_mtcnn(self, arr):
+        """
+        实际输入为numpy hwc bgr uint8。
+        mtcnn方法要求输入为 numpy hwc rgb uint8，而输出为tensor chw rgb -1~1 float，之后还需要转换至
+        numpy hwc bgr uint8。
+        """
+        numpy_hwc_rgb_uint8 = cv2.cvtColor(arr, cv2.COLOR_BGR2RGB)
+
+        rst_tensor: torch.Tensor = self.mtcnn(numpy_hwc_rgb_uint8)  # got tensor chw rgb -1~1 float
+
+        if rst_tensor is not None:
+            rst_array: np.ndarray = rst_tensor.numpy()  # to numpy chw rgb -1~1 float
+            rst_array = rst_array.transpose(1, 2, 0)  # to numpy hwc rgb -1~1 float
+            rst_array = cv2.cvtColor(rst_array, cv2.COLOR_RGB2BGR)  # to numpy hwc bgr -1~1 float
+            rst_array = (rst_array * 128 + 127.5).astype(np.uint8)  # to numpy hwc bgr uint8
+
+            return rst_array
+        else:
+            LOGGER.info(
+                Fore.GREEN +
+                "While using mtcnn detector, no face was detected, "
+                "return the original image."
+            )
+            return arr
+
+    def __crop_face_from_img_based_on_opencv(self, arr):
+        """
+        要求输入gray，输出为人脸位置。
+        (x, y, w, h) = faces[0]
+        face_array = arr[y: y + h, x: x + w, :]
+        """
+        # 此处转为灰阶，是为了opencv detector的需要，用于找到人脸框，但输出的人脸本身仍然是彩色
+        gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)
+        try:
             faces = self.opencv_face_detector.detectMultiScale(
                 gray,
                 scaleFactor=1.1,
                 minNeighbors=8,
             )
-            # 如果没有检测到人脸，return 原图像
-            if isinstance(faces, tuple):
-                LOGGER.info(
-                    Fore.GREEN + "No face was detected, return the original image."
-                )
-                return arr
-            else:
-                (x, y, w, h) = faces[0]
-                face_array = arr[y: y + h, x: x + w, :]
-                # plt.imshow(cv2.cvtColor(face_array, cv2.COLOR_BGR2RGB))
-                # plt.show()
-                return face_array
-        else:
-            raise ValueError(
-                f"参数FASTAPI_USING_DETECTION_METHOD的取值不受支持。"
-                f"当前取值为{FASTAPI_USING_DETECTION_METHOD}，"
-                f"支持的取值为'opencv'或'deepface'。"
+        except cv2.error as e:
+            LOGGER.error(
+                f"Error value: {e}\n"
+                f"{traceback.format_exc()}"
             )
+            return arr
+        # 如果没有检测到人脸，return 原图像
+        if isinstance(faces, tuple):
+            LOGGER.info(
+                Fore.GREEN +
+                "While using opencv detector, no face was detected, "
+                "return the original image."
+            )
+            return arr
+        else:
+            (x, y, w, h) = faces[0]
+            face_array = arr[y: y + h, x: x + w, :]
+            # plt.imshow(cv2.cvtColor(face_array, cv2.COLOR_BGR2RGB))
+            # plt.show()
+            return face_array
 
 
 def get_fastapi_transform():
@@ -254,8 +325,10 @@ def get_fastapi_transform():
         v2.Resize((160, 160)),
         v2.Normalize(mean=(127.5, 127.5, 127.5), std=(128, 128, 128)),
     ]
-    if FASTAPI_USING_GRAY_IMAGE:
-        trans_list.insert(2, v2.Grayscale(num_output_channels=3))
+    """
+    从2024.12.16版本开始，此处不再处理是否转为灰阶图片进行推理，
+    而是放到成员方法crop_face_from_img()中。
+    """
     return v2.Compose(trans_list)
 
 
@@ -280,7 +353,7 @@ def transform_distance_to_similarity_score(distance):
 @no_type_check
 def read_upload_file_img_as_numpy_hwc_bgr_uint8(file_0: UploadFile) -> np.ndarray:
     """
-    Returns: HWC, RGB, uint8
+    Returns: HWC, BGR, uint8
     """
     contents = file_0.file
     img = Image.open(contents)
@@ -311,6 +384,10 @@ def save_upload_file_obj_to_disk_as_image(f_0: UploadFile = File(...)):
         content = file_obj.read()
         file_obj.seek(0)
         f.write(content)
+    LOGGER.info(
+        Fore.GREEN +
+        f"An image has been saved to {upload_image_path.as_posix()}."
+    )
 
 
 def save_hwc_bgr_to_png(array, folder_path, filename):
@@ -320,6 +397,10 @@ def save_hwc_bgr_to_png(array, folder_path, filename):
     save_path = Path(folder_path) / Path(filename)
     # cv2.imwrite(filename=str(save_path), img=array)
     plt.imsave(save_path, array)
+    LOGGER.info(
+        Fore.GREEN +
+        f"An image has been saved to {save_path.as_posix()}."
+    )
 
 
 def judge_using_distance_threshold(distance):
