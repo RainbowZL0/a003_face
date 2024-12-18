@@ -4,9 +4,9 @@ from pathlib import Path
 import cv2
 from tqdm import tqdm
 
-from a002_main.a001_utils.a002_general_utils import glob_png_paths_in_folder
+from a002_model.a001_utils.a002_general_utils import glob_png_paths_in_folder
 
-IMAGE_FOLDER = r"a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat"
+IMAGE_FOLDER = r"a003_fastapi/a001_images/a003_upload_images_no_repeat"
 
 
 def start():

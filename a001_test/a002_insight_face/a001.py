@@ -8,7 +8,7 @@ from a001_test.a001_opencv_detection.a001_bug_check import (
     glob_png_paths_in_folder,
 )
 
-IMAGE_FOLDER = r"a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat"
+IMAGE_FOLDER = r"a003_fastapi/a001_images/a003_upload_images_no_repeat"
 
 
 def start():

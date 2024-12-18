@@ -3,7 +3,7 @@ from io import BytesIO
 from PIL import Image
 import numpy as np
 
-base64_txt_path = "./a002_main/a004_grammer_test/base64_png.txt"
+base64_txt_path = "./a002_model/a004_grammer_test/base64_png.txt"
 
 
 def test_01():

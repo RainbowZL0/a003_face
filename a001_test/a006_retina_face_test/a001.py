@@ -4,9 +4,9 @@ import torch
 from retinaface.pre_trained_models import get_model
 from tqdm import tqdm
 
-from a002_main.a001_utils.a002_general_utils import glob_png_paths_in_folder
+from a002_model.a001_utils.a002_general_utils import glob_png_paths_in_folder
 
-IMAGE_FOLDER = "a002_main/a004_fastapi/a001_images/a003_upload_images_no_repeat"
+IMAGE_FOLDER = "a003_fastapi/a001_images/a003_upload_images_no_repeat"
 CROP_IMAGE_FOLDER = r"a001_test/a003_facenet/a001_mtcnn_success_crop"
 
 model = get_model("resnet50_2020-07-20", max_size=2048)

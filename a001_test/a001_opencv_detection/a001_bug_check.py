@@ -1,7 +1,7 @@
 import cv2
 from tqdm import tqdm
 
-from a002_main.a001_utils.a002_general_utils import (
+from a002_model.a001_utils.a002_general_utils import (
     glob_png_paths_in_folder,
     read_image_path_as_hwc_bgr_uint8,
 )
