@@ -57,7 +57,14 @@ def start():
         + f"服务即将启动，调试可使用Swagger http://127.0.0.1:{FASTAPI_PORT}/docs 或"
           f"Redoc http://127.0.0.1:{FASTAPI_PORT}/redoc。"
     )
-    run(app=app, port=FASTAPI_PORT, reload=False, host="0.0.0.0")
+    run(
+        app=app,
+        port=FASTAPI_PORT,
+        reload=False,
+        host="0.0.0.0",
+        workers=1,
+        limit_concurrency=1,
+    )
 
 
 if __name__ == "__main__":

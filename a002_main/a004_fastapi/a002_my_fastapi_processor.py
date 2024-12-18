@@ -120,12 +120,16 @@ class MyFastapiProcessor:
         解码过程为，base64 -> decode -> ByteIO() -> PIL.open() -> numpy.array()。
         UploadFile有文件名，而base64没有，不便于保存到本地。采用时间戳生成文件名。
         """
+        received_time_stamp = get_time_stamp_str()
+
         img_arr_list = [
             read_base64_as_np_hwc_bgr_uint8(code_i) for code_i in [image_0, image_1]
         ]
 
         filename_tuple = generate_a_pair_of_file_name_from_array(
-            img_arr_list[0], img_arr_list[1]
+            time_str=received_time_stamp,
+            arr_0=img_arr_list[0],
+            arr_1=img_arr_list[1],
         )
         for i in range(2):
             save_hwc_bgr_to_png(
@@ -435,8 +439,9 @@ def build_model_and_load_my_state_for_fastapi():
     return model
 
 
-def generate_a_pair_of_file_name_from_array(arr_0, arr_1):
-    time_str = get_time_stamp_str()
+def generate_a_pair_of_file_name_from_array(time_str, arr_0, arr_1):
+    if time_str is None:
+        time_str = get_time_stamp_str()
     arr_0_file_name = generate_a_file_name_from_array(time_str, arr_0)
     arr_1_file_name = generate_a_file_name_from_array(time_str, arr_1)
     return arr_0_file_name, arr_1_file_name
