@@ -32,6 +32,8 @@
 !a001_test/a006_retina_face_test/a001_retinaface_success_crop/.gitkeep
 !a001_test/a006_retina_face_test/a002_retinaface_fail_crop/.gitkeep
 
+!a002_model/a003_training/saved_history/models/.gitkeep
+
 !a003_fastapi/a001_images/a001_upload_images/.gitkeep
 !a003_fastapi/a001_images/a002_crop/.gitkeep
 !a003_fastapi/a001_images/a003_upload_images_no_repeat/.gitkeep

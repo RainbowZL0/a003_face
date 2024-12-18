@@ -1,4 +1,5 @@
 import json
+import time
 
 import colored_traceback
 import requests
@@ -57,4 +58,6 @@ def test_post_image_pair_base64():
 
 
 if __name__ == "__main__":
-    test_post_image_pair_base64()
+    for i in range(100):
+        test_post_image_pair_base64()
+        time.sleep(1)
