@@ -5,10 +5,13 @@ import colored_traceback
 import requests
 
 from a002_model.a001_utils.a000_CONFIG import FASTAPI_PORT
+from a002_model.a001_utils.a002_general_utils import get_time_stamp_str
 
 colored_traceback.add_hook()
 
-API_URL = rf"http://127.0.0.1:{FASTAPI_PORT}"
+# API_URL = rf"http://127.0.0.1:{FASTAPI_PORT}"
+API_URL = rf"http://172.29.248.181:{FASTAPI_PORT}"
+
 BASE64_TXT_PATH_0 = r"a003_fastapi/a002_base64_post_test/base64/p1_0.txt"
 BASE64_TXT_PATH_1 = r"a003_fastapi/a002_base64_post_test/base64/p2_0.txt"
 
@@ -58,6 +61,13 @@ def test_post_image_pair_base64():
 
 
 if __name__ == "__main__":
-    for i in range(100):
+    start_timestamp = get_time_stamp_str()
+
+    for i in range(10):
         test_post_image_pair_base64()
-        time.sleep(1)
+
+    end_timestamp = get_time_stamp_str()
+
+    print(
+        f"Start at {start_timestamp}, end at {end_timestamp}"
+    )
