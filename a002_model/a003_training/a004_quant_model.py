@@ -13,8 +13,6 @@ from torch.quantization import (
 
 from a002_model.a001_utils.a000_CONFIG import TRAINING_INITIAL_LR
 
-qconfig = get_default_qat_qconfig('fbgemm')  # 'fbgemm' 适用于 x86 CPU
-
 
 class MyFacenetModel(InceptionResnetV1):
     def __init__(self, with_quantization, pretrained):
@@ -65,7 +63,7 @@ def test_main():
 def generate_my_facenet_model(with_quantization, pretrained, device):
     model = MyFacenetModel(with_quantization=with_quantization, pretrained=pretrained).to(device)
     if with_quantization:
-        model.qconfig = get_default_qat_qconfig()  # 'fbgemm' 适用于 x86 CPU
+        model.qconfig = get_default_qat_qconfig()  # 'fbgemm' 是适用于 x86 CPU的过时写法，当前建议用'x86'，也是默认值
         model = prepare_qat(model.train())
     return model
 

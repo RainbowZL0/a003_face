@@ -26,8 +26,9 @@ from a002_model.a001_utils.a000_CONFIG import (
     DISTANCE_THRESHOLD,
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
-    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, )
+    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, FASTAPI_WITH_QUANTIZATION, )
 from a002_model.a001_utils.a002_general_utils import my_distance_func, get_time_stamp_str
+from a002_model.a003_training.a004_quant_model import generate_my_facenet_model, convert_model_to_int8
 
 
 class MyFastapiProcessor:
@@ -429,13 +430,23 @@ def build_model_and_load_my_state_for_fastapi():
         Fore.LIGHTGREEN_EX
         + f"Building model and loading state for FastAPI, from {LOAD_FROM_STATE_PATH}."
     )
+
     read_state = torch.load(
         LOAD_FROM_STATE_PATH,
-        map_location=FASTAPI_DEVICE,
     )
 
-    model = InceptionResnetV1(pretrained="vggface2").to(device=FASTAPI_DEVICE)
-    model.load_state_dict(state_dict=read_state["model_state"])
+    model = generate_my_facenet_model(
+        with_quantization=FASTAPI_WITH_QUANTIZATION,
+        pretrained='vggface2',
+        device=FASTAPI_DEVICE,
+    )
+
+    if FASTAPI_WITH_QUANTIZATION:
+        model = model.eval().to('cpu')
+        model = convert_model_to_int8(model)
+
+    model.load_state_dict(read_state["model_state"], strict=False)
+
     return model
 
 

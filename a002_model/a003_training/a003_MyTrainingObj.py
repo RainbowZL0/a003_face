@@ -214,10 +214,6 @@ class MyTrainingObj:
                 self.high_level_api_for_vali_and_analyze()
 
     def high_level_api_for_vali_and_analyze(self):
-        # FIXME
-        # self.model = self.model.eval().to('cpu')
-        # self.model = convert_model_to_int8(self.model)
-
         detailed_result_list, detailed_result_list_save_to_json_path = self.vali()
         analyze_detailed_result_to_get_cosine_similarity_distribution(
             detailed_result_list=detailed_result_list,
@@ -447,7 +443,7 @@ class MyTrainingObj:
             self.model = self.model.eval().to('cpu')
             self.model = convert_model_to_int8(self.model)
 
-        # 分别load state
+        # model, optimizer, scheduler 分别load state
         self.model.load_state_dict(read_state["model_state"], strict=False)
         self.model.to(TRAINING_OR_VALI_DEVICE)
 
