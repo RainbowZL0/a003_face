@@ -31,8 +31,6 @@ def start_main_train():
     # my_training_obj.load_my_state()
     # my_training_obj.high_level_api_for_vali_and_analyze()
 
-
-
     # analyze_detailed_result_to_get_cosine_similarity_distribution(
     #     detailed_result_json_path=os.path.join(VALI_LOG_FOLDER, VALI_ANALYZE_USING_DETAILED_RESULT_JS_NAME)
     # )

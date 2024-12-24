@@ -1,3 +1,4 @@
+import copy
 import os.path
 from pathlib import Path
 from textwrap import dedent
@@ -5,7 +6,6 @@ from textwrap import dedent
 import seaborn as sns
 import torch
 from colorama import Fore
-from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
 from matplotlib import pyplot as plt
 from torch import optim
 from torch.nn import TripletMarginWithDistanceLoss
@@ -28,7 +28,7 @@ from a002_model.a001_utils.a000_CONFIG import (
     VALI_BATCH_SIZE,
     TRAINING_SAVE_MODEL_TO_FOLDER,
     LOAD_FROM_STATE_PATH,
-    WHETHER_USING_SAVED_STATE,
+    TRAINING_WHETHER_USING_SAVED_STATE,
     TRAINING_VALI_INTERVAL_IN_ITERS,
     VALI_LOG_FOLDER,
     LOGGER,
@@ -36,7 +36,9 @@ from a002_model.a001_utils.a000_CONFIG import (
     LOSS_FUNC_SWAP,
     LOSS_FUNC_WEIGHT_D_AN_PENALTY,
     LOSS_FUNC_USING_SELF_DEFINED,
-    TRAINING_USING_GRAY_IMAGE, TRAINING_TENSOR_BOARD_LOG_DIR,
+    TRAINING_USING_GRAY_IMAGE,
+    TRAINING_TENSOR_BOARD_LOG_DIR,
+    TRAINING_OR_VALI_WITH_QUANTIZATION,
 )
 from a002_model.a001_utils.a002_general_utils import (
     my_collate_fn_factory,
@@ -46,6 +48,7 @@ from a002_model.a001_utils.a002_general_utils import (
     my_distance_func, get_time_stamp_str
 )
 from a002_model.a003_training.a002_DatasetForTraining import DatasetForTrainingAndVali
+from a002_model.a003_training.a004_quant_model import generate_my_facenet_model, convert_model_to_int8
 
 
 class MyTrainingObj:
@@ -72,7 +75,11 @@ class MyTrainingObj:
         self.transform_for_training = _get_transform(whether_use_augmentation_for_training=True)
         self.transform_for_vali = _get_transform(whether_use_augmentation_for_training=False)
         # 定义模型
-        self.model = InceptionResnetV1(pretrained="vggface2").to(device=TRAINING_OR_VALI_DEVICE)
+        self.model = generate_my_facenet_model(
+            with_quantization=TRAINING_OR_VALI_WITH_QUANTIZATION,
+            pretrained='vggface2',
+            device=TRAINING_OR_VALI_DEVICE,
+        )
         # 优化器和学习率调整
         self.optimizer = optim.Adam(self.model.parameters(), lr=TRAINING_INITIAL_LR)
         self.scheduler = CosineAnnealingWarmRestarts(
@@ -108,7 +115,7 @@ class MyTrainingObj:
         self.detailed_vali_result_list = []
 
     def start_train_and_vali(self):
-        if WHETHER_USING_SAVED_STATE:
+        if TRAINING_WHETHER_USING_SAVED_STATE:
             self.load_my_state()
         else:
             LOGGER.info(
@@ -199,13 +206,18 @@ class MyTrainingObj:
 
             # lr scheduler
             self.current_epochs_float = self.__calcu_current_epochs_float()
-            self.scheduler.step(self.current_epochs_float)  # type: ignore
+            # noinspection PyTypeChecker,PydanticTypeChecker
+            self.scheduler.step(self.current_epochs_float)
 
             # 训练过程中，每指定的iters过后，进行validation
             if self.iters_up_to_now % TRAINING_VALI_INTERVAL_IN_ITERS == 0:
                 self.high_level_api_for_vali_and_analyze()
 
     def high_level_api_for_vali_and_analyze(self):
+        # FIXME
+        # self.model = self.model.eval().to('cpu')
+        # self.model = convert_model_to_int8(self.model)
+
         detailed_result_list, detailed_result_list_save_to_json_path = self.vali()
         analyze_detailed_result_to_get_cosine_similarity_distribution(
             detailed_result_list=detailed_result_list,
@@ -346,6 +358,7 @@ class MyTrainingObj:
         return detailed_result_list, js_path_obj
 
     def save_my_state(self):
+        # 准备文件名和路径
         time_str = get_time_stamp_str()
         model_file_name = (f"{time_str}_epochs-{self.current_epochs + 1}_"
                            f"iters-up-to-now-{self.iters_up_to_now}.pth")
@@ -355,8 +368,15 @@ class MyTrainingObj:
         if not save_model_to_folder_obj.exists():
             save_model_to_folder_obj.mkdir(parents=True, exist_ok=True)
 
+        if TRAINING_OR_VALI_WITH_QUANTIZATION:
+            # 必须先转为eval()才能convert
+            model = copy.deepcopy(self.model)
+            model = convert_model_to_int8(model.eval().to('cpu'))
+        else:
+            model = self.model
+
         state = {
-            "model_state": self.model.state_dict(),
+            "model_state": model.state_dict(),
             "optimizer_state": self.optimizer.state_dict(),
             "scheduler_state": self.scheduler.state_dict(),
             "current_epochs": self.current_epochs + 1,
@@ -421,11 +441,19 @@ class MyTrainingObj:
 
         read_state = torch.load(
             LOAD_FROM_STATE_PATH,
-            map_location=TRAINING_OR_VALI_DEVICE
         )
+
+        if TRAINING_OR_VALI_WITH_QUANTIZATION:
+            self.model = self.model.eval().to('cpu')
+            self.model = convert_model_to_int8(self.model)
 
         # 分别load state
         self.model.load_state_dict(read_state["model_state"])
+        self.model.to(TRAINING_OR_VALI_DEVICE)
+
+        # debug
+        stt = self.model.state_dict()
+
         self.optimizer.load_state_dict(read_state["optimizer_state"])
         self.scheduler.load_state_dict(read_state["scheduler_state"])
         self.current_epochs = read_state["current_epochs"]

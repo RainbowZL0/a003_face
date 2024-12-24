@@ -37,9 +37,14 @@ TRAINING_VALI_SET_RATIO = 0.1
 TRAINING_USING_GRAY_IMAGE = True
 TRAINING_TENSOR_BOARD_LOG_DIR = "./a002_model/a003_training/runs"
 
-WHETHER_USING_SAVED_STATE = False
-LOAD_FROM_STATE_PATH = (r"./a002_model/a003_training/saved_history/models/"
-                        r"12-10-19-47-08_epochs-2_iters-up-to-now-312.pth")
+TRAINING_OR_VALI_WITH_QUANTIZATION = True
+
+TRAINING_WHETHER_USING_SAVED_STATE = False
+
+LOAD_FROM_STATE_PATH = (
+    r"a002_model/a003_training/saved_history/models"
+    r"/2024-12-23_14-57-30_epochs-2_iters-up-to-now-2.pth"
+)
 
 VALI_SAMPLES_NUM = 5000
 VALI_BATCH_SIZE = 64
@@ -59,4 +64,4 @@ FASTAPI_PORT = 8092
 FASTAPI_LOG_JSON_FILE_PATH = r"a003_fastapi/a003_logs/log.json"
 FASTAPI_USING_GRAY_IMAGE = True
 
-DISTANCE_THRESHOLD = 0.5
+DISTANCE_THRESHOLD = 0.5  # a float, 0~2
