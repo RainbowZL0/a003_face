@@ -448,7 +448,7 @@ class MyTrainingObj:
             self.model = convert_model_to_int8(self.model)
 
         # 分别load state
-        self.model.load_state_dict(read_state["model_state"])
+        self.model.load_state_dict(read_state["model_state"], strict=False)
         self.model.to(TRAINING_OR_VALI_DEVICE)
 
         # debug
