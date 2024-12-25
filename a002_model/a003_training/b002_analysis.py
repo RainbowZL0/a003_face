@@ -1,9 +1,13 @@
 import os
 
 import torch
+from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
 
 from a002_model.a001_utils.a002_general_utils import get_time_stamp_str
 from a002_model.a003_training.a004_quant_model import generate_my_facenet_model, convert_model_to_int8
+
+
+USE_QUANT_MODEL = False
 
 
 def get_quantization_model(state_path):
@@ -17,11 +21,26 @@ def get_quantization_model(state_path):
     return model
 
 
-def start_analysis():
-    model = get_quantization_model(
-        r"a002_model/a003_training/saved_history/models"
-        r"/2024-12-24_14-03-58_epochs-2_iters-up-to-now-312.pth"
-    )
+def get_un_quant_model():
+    model = InceptionResnetV1(pretrained='vggface2').eval().to('cpu')
+    # model.load_state_dict(
+    #     torch.load(
+    #         r"a002_model/a003_training/saved_history/models"
+    #         r"/12-10-19-47-08_epochs-2_iters-up-to-now-312.pth",
+    #         map_location='cpu',
+    #     )
+    # )
+    return model
+
+
+def start_analysis(use_quant_model):
+    if use_quant_model:
+        model = get_quantization_model(
+            r"a002_model/a003_training/saved_history/models"
+            r"/2024-12-24_14-03-58_epochs-2_iters-up-to-now-312.pth"
+        )
+    else:
+        model = get_un_quant_model()
     test_data = torch.rand(
         size=(1, 3, 160, 160),
         dtype=torch.float32,
@@ -56,4 +75,4 @@ def start_analysis():
 
 
 if __name__ == '__main__':
-    start_analysis()
+    start_analysis(use_quant_model=USE_QUANT_MODEL)
