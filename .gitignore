@@ -17,6 +17,7 @@
 /a002_model/a003_training/saved_history/models/*
 /a002_model/a003_training/saved_history/validation/*
 /a002_model/a003_training/runs/*
+/a002_model/a003_training/analysis/*
 
 /a003_fastapi/a001_images/a001_upload_images/*
 /a003_fastapi/a001_images/a002_crop/*
@@ -36,6 +37,7 @@
 !a002_model/a003_training/saved_history/models/.gitkeep
 !a002_model/a003_training/saved_history/validation/.gitkeep
 !a002_model/a003_training/runs/.gitkeep
+!a002_model/a003_training/analysis/.gitkeep
 
 !a003_fastapi/a001_images/a001_upload_images/.gitkeep
 !a003_fastapi/a001_images/a002_crop/.gitkeep
