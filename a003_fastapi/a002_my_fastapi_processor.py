@@ -423,6 +423,7 @@ def build_model_and_load_my_state_for_fastapi():
 
     read_state = torch.load(
         LOAD_FROM_STATE_PATH,
+        map_location=FASTAPI_DEVICE,
     )
 
     model = generate_my_facenet_model(
