@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from pydantic import BaseModel, ValidationError
 
+from a002_model.a001_utils.a000_CONFIG import FLASK_PORT
 from a003_fastapi.a002_my_fastapi_processor import MyFastapiProcessor
 from a003_fastapi.a003_class_image_pair_base64 import ImagePairBase64Request
 
@@ -26,7 +27,7 @@ def face_comparison():
 def run_flask_server():
     app.run(
         host="0.0.0.0",
-        port=8092,
+        port=FLASK_PORT,
         threaded=False  # 确保单线程处理请求
     )
 

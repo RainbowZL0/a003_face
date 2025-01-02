@@ -1,8 +1,7 @@
 import os
 import tkinter as tk
-from tkinter import filedialog, messagebox
 from collections import defaultdict
-import re
+from tkinter import filedialog, messagebox
 
 
 class ImageRenamer:

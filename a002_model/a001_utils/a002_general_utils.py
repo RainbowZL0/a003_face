@@ -3,11 +3,13 @@ import math
 import os
 from datetime import datetime
 from glob import glob
+from pathlib import Path
 from typing import Any, Dict, List
 
 import cv2
 import natsort
 import torch
+from colorama import Fore
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -16,7 +18,7 @@ from torch.nn import functional
 from a002_model.a001_utils.a000_CONFIG import (
     DPI,
     TEST_NUM_SAMPLES_PER_EPOCH,
-    DATASET_SF_TL54_PATH,
+    DATASET_SF_TL54_PATH, LOGGER,
 )
 
 
@@ -139,3 +141,16 @@ def glob_png_paths_in_folder(image_folder):
 def read_image_path_as_hwc_bgr_uint8(image_path):
     image_array = cv2.imread(image_path)
     return image_array
+
+
+def save_hwc_bgr_to_png(array, folder_path, filename):
+    array = cv2.cvtColor(src=array, code=cv2.COLOR_BGR2RGB)
+    if not filename.lower().endswith(".png"):
+        filename = f"{filename}.png"
+    save_path = Path(folder_path) / Path(filename)
+    # cv2.imwrite(filename=str(save_path), img=array)
+    plt.imsave(save_path, array)
+    LOGGER.info(
+        Fore.GREEN +
+        f"An image has been saved to {save_path.as_posix()}."
+    )

@@ -12,12 +12,11 @@ import numpy as np
 import torch
 from PIL import Image
 from colorama import Fore
-from facenet_pytorch.models.inception_resnet_v1 import InceptionResnetV1
 from facenet_pytorch.models.mtcnn import MTCNN
 from fastapi import UploadFile, File
-from matplotlib import pyplot as plt
 from torchvision.transforms import v2
 
+from a001_test.a008_resize.a001 import ensure_max_side
 from a002_model.a001_utils.a000_CONFIG import (
     FASTAPI_LOG_JSON_FILE_PATH,
     FASTAPI_UPLOAD_IMAGE_FOLDER,
@@ -27,7 +26,7 @@ from a002_model.a001_utils.a000_CONFIG import (
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
     FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, FASTAPI_WITH_QUANTIZATION, )
-from a002_model.a001_utils.a002_general_utils import my_distance_func, get_time_stamp_str
+from a002_model.a001_utils.a002_general_utils import my_distance_func, get_time_stamp_str, save_hwc_bgr_to_png
 from a002_model.a003_training.a004_quant_model import generate_my_facenet_model, convert_model_to_int8
 
 
@@ -40,6 +39,7 @@ class MyFastapiProcessor:
             from deepface.DeepFace import extract_faces
             self.deepface_extract_faces = extract_faces
         elif FASTAPI_USING_DETECTION_METHOD == "opencv":
+            # noinspection PyUnresolvedReferences
             self.opencv_face_detector = cv2.CascadeClassifier(
                 cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
             )
@@ -138,6 +138,9 @@ class MyFastapiProcessor:
                 folder_path=FASTAPI_UPLOAD_IMAGE_FOLDER,
                 filename=filename_tuple[i],
             )
+
+        # resize image if it is too large
+        img_arr_list = [ensure_max_side(img=img_i) for img_i in img_arr_list]
 
         face_arr_list = [
             self.crop_face_from_img(
@@ -391,19 +394,6 @@ def save_upload_file_obj_to_disk_as_image(f_0: UploadFile = File(...)):
     LOGGER.info(
         Fore.GREEN +
         f"An image has been saved to {upload_image_path.as_posix()}."
-    )
-
-
-def save_hwc_bgr_to_png(array, folder_path, filename):
-    array = cv2.cvtColor(src=array, code=cv2.COLOR_BGR2RGB)
-    if not filename.lower().endswith(".png"):
-        filename = f"{filename}.png"
-    save_path = Path(folder_path) / Path(filename)
-    # cv2.imwrite(filename=str(save_path), img=array)
-    plt.imsave(save_path, array)
-    LOGGER.info(
-        Fore.GREEN +
-        f"An image has been saved to {save_path.as_posix()}."
     )
 
 

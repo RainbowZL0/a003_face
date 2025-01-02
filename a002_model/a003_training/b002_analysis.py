@@ -74,5 +74,11 @@ def start_analysis(use_quant_model):
                 model(test_data)
 
 
+def print_model():
+    model = get_un_quant_model()
+    print(model)
+
+
 if __name__ == '__main__':
-    start_analysis(use_quant_model=USE_QUANT_MODEL)
+    # start_analysis(use_quant_model=USE_QUANT_MODEL)
+    print_model()
