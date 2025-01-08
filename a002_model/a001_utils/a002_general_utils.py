@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 
 import cv2
 import natsort
+import numpy as np
 import torch
 from colorama import Fore
 from matplotlib import pyplot as plt
@@ -18,7 +19,7 @@ from torch.nn import functional
 from a002_model.a001_utils.a000_CONFIG import (
     DPI,
     TEST_NUM_SAMPLES_PER_EPOCH,
-    DATASET_SF_TL54_PATH, LOGGER,
+    DATASET_SF_TL54_PATH, LOGGER, FASTAPI_INFERENCE_WITH_MAX_IMAGE_SIDE,
 )
 
 
@@ -154,3 +155,51 @@ def save_hwc_bgr_to_png(array, folder_path, filename):
         Fore.GREEN +
         f"An image has been saved to {save_path.as_posix()}."
     )
+
+
+def convert_hwc_bgr_uint8_to_gray_3c_uint8(arr):
+    gray_array = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)  # numpy hw uint8
+    gray_array = np.expand_dims(gray_array, axis=2)  # numpy hwc c=1 uint8
+    return np.tile(gray_array, (1, 1, 3))  # numpy hwc c=3 uint8
+
+
+def ensure_max_side_for_hwc_bgr_uint8(
+        img: np.ndarray,
+        max_side: int = FASTAPI_INFERENCE_WITH_MAX_IMAGE_SIDE,
+) -> np.ndarray:
+    """
+    确保输入图像的最长边不超过 max_side。
+    如果超过，则按等比将最长边缩放至 max_side。
+
+    参数:
+    - img: 输入图像 (H, W, C)，BGR 格式，类型为 uint8。
+    - max_side: 最长边限制，默认为 1000。
+
+    返回:
+    - 缩放后的图像 (H, W, C)，BGR，uint8。
+    """
+    if img is None:
+        raise ValueError("输入图像为空（None）")
+
+    h, w = img.shape[:2]
+    longest_edge = max(h, w)
+
+    # 判断是否需要缩放
+    if longest_edge > max_side:
+        # 计算缩放因子
+        scale = max_side / float(longest_edge)
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        # 使用 INTER_AREA 进行缩小，效果较好
+        img = cv2.resize(
+            img,
+            (new_w, new_h),
+            interpolation=cv2.INTER_AREA
+        )
+
+        LOGGER.info(
+            Fore.GREEN +
+            f"An image was resized, h w: ({h}, {w}) -> ({new_h}, {new_w})."
+        )
+
+    return img

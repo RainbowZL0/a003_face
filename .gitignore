@@ -4,7 +4,6 @@
 /.idea
 /.env
 /output.log
-runs/*
 
 /a000_DATASET/*
 
@@ -16,6 +15,7 @@ runs/*
 /a001_test/a006_retina_face_test/a002_retinaface_fail_crop
 /a001_test/a009_yolo11/models/*
 /a001_test/a009_yolo11/input_images/*
+/a001_test/a009_yolo11/output_images/*
 
 /a002_model/a003_training/saved_history/models/*
 /a002_model/a003_training/saved_history/validation/*
@@ -38,6 +38,7 @@ runs/*
 !a001_test/a006_retina_face_test/a002_retinaface_fail_crop/.gitkeep
 !/a001_test/a009_yolo11/models/.gitkeep
 !a001_test/a009_yolo11/input_images/.gitkeep
+!a001_test/a009_yolo11/output_images/.gitkeep
 
 !a002_model/a003_training/saved_history/models/.gitkeep
 !a002_model/a003_training/saved_history/validation/.gitkeep

@@ -16,8 +16,8 @@ from colorama import Fore
 from facenet_pytorch.models.mtcnn import MTCNN
 from fastapi import UploadFile, File
 from torchvision.transforms import v2
+from ultralytics import YOLO
 
-from a001_test.a008_resize.a001 import ensure_max_side
 from a002_model.a001_utils.a000_CONFIG import (
     FASTAPI_LOG_JSON_FILE_PATH,
     FASTAPI_UPLOAD_IMAGE_FOLDER,
@@ -26,9 +26,25 @@ from a002_model.a001_utils.a000_CONFIG import (
     DISTANCE_THRESHOLD,
     FASTAPI_CROP_IMAGE_FOLDER,
     FASTAPI_DEVICE,
-    FASTAPI_USING_DETECTION_METHOD, FASTAPI_USING_GRAY_IMAGE, FASTAPI_WITH_QUANTIZATION, )
-from a002_model.a001_utils.a002_general_utils import my_distance_func, get_time_stamp_str, save_hwc_bgr_to_png
-from a002_model.a003_training.a004_quant_model import generate_my_facenet_model, convert_model_to_int8
+    FASTAPI_USING_DETECTION_METHOD,
+    FASTAPI_USING_GRAY_IMAGE,
+    FASTAPI_WITH_QUANTIZATION_MODEL,
+)
+
+if FASTAPI_USING_DETECTION_METHOD == "yolov11":
+    from a002_model.a001_utils.a000_CONFIG import FASTAPI_DETECTION_YOLO_MODEL_PATH
+
+from a002_model.a001_utils.a002_general_utils import (
+    my_distance_func,
+    get_time_stamp_str,
+    save_hwc_bgr_to_png,
+    convert_hwc_bgr_uint8_to_gray_3c_uint8,
+    ensure_max_side_for_hwc_bgr_uint8
+)
+from a002_model.a003_training.a004_quant_model import (
+    generate_my_facenet_model,
+    convert_model_to_int8
+)
 
 
 class MyFastapiProcessor:
@@ -46,6 +62,8 @@ class MyFastapiProcessor:
             )
         elif FASTAPI_USING_DETECTION_METHOD == "mtcnn":
             self.mtcnn = MTCNN(thresholds=[0.4, 0.5, 0.5])
+        elif FASTAPI_USING_DETECTION_METHOD == "yolov11":
+            self.yolo = YOLO(FASTAPI_DETECTION_YOLO_MODEL_PATH)
         else:
             raise NotImplementedError(
                 f"FASTAPI_USING_DETECTION_METHOD = {FASTAPI_USING_DETECTION_METHOD}, "
@@ -124,12 +142,14 @@ class MyFastapiProcessor:
         """
         received_time_stamp = get_time_stamp_str()
 
+        # time0
         time_debug = [time.time()]
 
         img_arr_list = [
             read_base64_as_np_hwc_bgr_uint8(code_i) for code_i in [image_0, image_1]
         ]
 
+        # time1
         time_debug.append(time.time())
 
         filename_tuple = generate_a_pair_of_file_name_from_array(
@@ -138,8 +158,8 @@ class MyFastapiProcessor:
             arr_1=img_arr_list[1],
         )
 
+        # time2
         time_debug.append(time.time())
-        time_0 = time.time()
 
         for i in range(2):
             save_hwc_bgr_to_png(
@@ -147,14 +167,12 @@ class MyFastapiProcessor:
                 folder_path=FASTAPI_UPLOAD_IMAGE_FOLDER,
                 filename=filename_tuple[i],
             )
-        time_1 = time.time()
-        time_critical = round(time_1 - time_0, 3)
-        print(f"time_critical= {time_critical}")
 
+        # time3
         time_debug.append(time.time())
 
         # resize image if it is too large
-        img_arr_list = [ensure_max_side(img=img_i) for img_i in img_arr_list]
+        img_arr_list = [ensure_max_side_for_hwc_bgr_uint8(img=img_i) for img_i in img_arr_list]
 
         face_arr_list = [
             self.crop_face_from_img(
@@ -164,6 +182,7 @@ class MyFastapiProcessor:
             for img_i in img_arr_list
         ]
 
+        # time4
         time_debug.append(time.time())
 
         for i in range(2):
@@ -173,6 +192,7 @@ class MyFastapiProcessor:
                 filename=filename_tuple[i],
             )
 
+        # time5
         time_debug.append(time.time())
 
         face_tensor_list = [
@@ -180,13 +200,14 @@ class MyFastapiProcessor:
         ]
         distance = self.infer_distance_given_face_tensor_list(face_tensor_list)
 
+        # time6
         time_debug.append(time.time())
 
         for i in range(len(time_debug) - 1):
             time_diff = time_debug[i + 1] - time_debug[i]
             time_diff = round(time_diff, 3)
             print(
-                f"time{i}~{i+1} = {time_diff}"
+                f"time{i}~{i + 1} = {time_diff}"
             )
 
         result_dict = {
@@ -245,13 +266,14 @@ class MyFastapiProcessor:
         return:
             np_hwc_bgr_uint8
         """
-        # TODO 增加对灰阶图片的detection以及后续的embedding
         if fastapi_using_detection_method == "deepface":
             rst_array = self.__crop_face_from_img_based_on_deepface(arr)
         elif fastapi_using_detection_method == "opencv":
             rst_array = self.__crop_face_from_img_based_on_opencv(arr)
         elif fastapi_using_detection_method == "mtcnn":
             rst_array = self.__crop_face_from_img_based_on_mtcnn(arr)
+        elif fastapi_using_detection_method == "yolov11":
+            rst_array = self.__crop_face_from_img_based_on_yolo(arr)
         else:
             raise NotImplementedError(
                 f"fastapi_using_detection_method = {fastapi_using_detection_method}, "
@@ -260,10 +282,7 @@ class MyFastapiProcessor:
         if not FASTAPI_USING_GRAY_IMAGE:
             return rst_array
         else:
-            gray_array = cv2.cvtColor(rst_array, cv2.COLOR_BGR2GRAY)  # numpy hw uint8
-            gray_array = np.expand_dims(gray_array, axis=2)  # numpy hwc c=1 uint8
-            gray_array = np.tile(gray_array, (1, 1, 3))  # numpy hwc c=3 uint8
-            return gray_array
+            return convert_hwc_bgr_uint8_to_gray_3c_uint8(rst_array)
 
     def __crop_face_from_img_based_on_deepface(self, arr):
         """
@@ -294,9 +313,9 @@ class MyFastapiProcessor:
 
     def __crop_face_from_img_based_on_mtcnn(self, arr):
         """
-        实际输入为numpy hwc bgr uint8。
-        mtcnn方法要求输入为 numpy hwc rgb uint8，而输出为tensor chw rgb -1~1 float，之后还需要转换至
-        numpy hwc bgr uint8。
+        arr传入为numpy hwc bgr uint8。
+        然而self.mtcnn()方法要求输入为 numpy hwc rgb uint8，输出为tensor chw rgb -1~1 float，
+        之后还需要转换至numpy hwc bgr uint8。
         """
         numpy_hwc_rgb_uint8 = cv2.cvtColor(arr, cv2.COLOR_BGR2RGB)
 
@@ -351,6 +370,28 @@ class MyFastapiProcessor:
             # plt.imshow(cv2.cvtColor(face_array, cv2.COLOR_BGR2RGB))
             # plt.show()
             return face_array
+
+    def __crop_face_from_img_based_on_yolo(self, arr):
+        """
+        传入arr类型为numpy hwc bgr uint8
+        """
+        results = self.yolo.predict(arr, save=False)
+        result = results[0]
+
+        # if no face was detected
+        if len(result) == 0:
+            LOGGER.info(
+                Fore.GREEN +
+                "While using yolo detector, no face was detected, "
+                "return the original image."
+            )
+            return arr
+        # if face was actually detected
+        else:
+            xyxy_float = result.boxes.xyxy[0, :].tolist()
+            xyxy_int = [int(i) for i in xyxy_float]
+            x1, y1, x2, y2 = xyxy_int
+            return arr[y1:y2, x1:x2]
 
 
 def get_fastapi_transform():
@@ -455,12 +496,12 @@ def build_model_and_load_my_state_for_fastapi():
     )
 
     model = generate_my_facenet_model(
-        with_quantization=FASTAPI_WITH_QUANTIZATION,
+        with_quantization=FASTAPI_WITH_QUANTIZATION_MODEL,
         pretrained='vggface2',
         device=FASTAPI_DEVICE,
     )
 
-    if FASTAPI_WITH_QUANTIZATION:
+    if FASTAPI_WITH_QUANTIZATION_MODEL:
         model = model.eval().to('cpu')
         model = convert_model_to_int8(model)
 
