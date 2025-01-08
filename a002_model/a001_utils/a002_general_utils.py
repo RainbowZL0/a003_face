@@ -144,12 +144,12 @@ def read_image_path_as_hwc_bgr_uint8(image_path):
 
 
 def save_hwc_bgr_to_png(array, folder_path, filename):
-    array = cv2.cvtColor(src=array, code=cv2.COLOR_BGR2RGB)
+    # array = cv2.cvtColor(src=array, code=cv2.COLOR_BGR2RGB)
     if not filename.lower().endswith(".png"):
         filename = f"{filename}.png"
     save_path = Path(folder_path) / Path(filename)
-    # cv2.imwrite(filename=str(save_path), img=array)
-    plt.imsave(save_path, array)
+    cv2.imwrite(filename=str(save_path), img=array)
+    # plt.imsave(save_path, array)
     LOGGER.info(
         Fore.GREEN +
         f"An image has been saved to {save_path.as_posix()}."

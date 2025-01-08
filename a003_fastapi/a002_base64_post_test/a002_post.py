@@ -3,15 +3,14 @@ import json
 import colored_traceback
 import requests
 
-from a002_model.a001_utils.a000_CONFIG import FASTAPI_PORT
 from a002_model.a001_utils.a002_general_utils import get_time_stamp_str
 
 colored_traceback.add_hook()
 POST_TO_PORT = 8092
 
-API_URL = rf"http://8.141.155.10:{POST_TO_PORT}"
-# API_URL = rf"http://127.0.0.1:{FASTAPI_PORT}"
-# API_URL = rf"http://172.29.248.181:{FASTAPI_PORT}"
+# API_URL = rf"http://8.141.155.10:{POST_TO_PORT}"
+API_URL = rf"http://127.0.0.1:{POST_TO_PORT}"
+# API_URL = rf"http://172.29.248.181:{POST_TO_PORT}"
 
 BASE64_TXT_PATH_0 = r"a003_fastapi/a002_base64_post_test/base64/p1_0.txt"
 BASE64_TXT_PATH_1 = r"a003_fastapi/a002_base64_post_test/base64/p2_0.txt"
@@ -85,7 +84,7 @@ def print_post_format(base64_path_0: str, base64_path_1: str, api_url: str):
 if __name__ == "__main__":
     start_timestamp = get_time_stamp_str()
 
-    for i in range(1):
+    for i in range(5):
         test_post_image_pair_base64()
 
     end_timestamp = get_time_stamp_str()

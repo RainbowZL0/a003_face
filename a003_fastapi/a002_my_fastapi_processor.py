@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+import time
 import traceback
 from io import BytesIO
 from pathlib import Path
@@ -123,21 +124,34 @@ class MyFastapiProcessor:
         """
         received_time_stamp = get_time_stamp_str()
 
+        time_debug = [time.time()]
+
         img_arr_list = [
             read_base64_as_np_hwc_bgr_uint8(code_i) for code_i in [image_0, image_1]
         ]
+
+        time_debug.append(time.time())
 
         filename_tuple = generate_a_pair_of_file_name_from_array(
             time_str=received_time_stamp,
             arr_0=img_arr_list[0],
             arr_1=img_arr_list[1],
         )
+
+        time_debug.append(time.time())
+        time_0 = time.time()
+
         for i in range(2):
             save_hwc_bgr_to_png(
                 array=img_arr_list[i],
                 folder_path=FASTAPI_UPLOAD_IMAGE_FOLDER,
                 filename=filename_tuple[i],
             )
+        time_1 = time.time()
+        time_critical = round(time_1 - time_0, 3)
+        print(f"time_critical= {time_critical}")
+
+        time_debug.append(time.time())
 
         # resize image if it is too large
         img_arr_list = [ensure_max_side(img=img_i) for img_i in img_arr_list]
@@ -149,6 +163,9 @@ class MyFastapiProcessor:
             )
             for img_i in img_arr_list
         ]
+
+        time_debug.append(time.time())
+
         for i in range(2):
             save_hwc_bgr_to_png(
                 array=face_arr_list[i],
@@ -156,10 +173,21 @@ class MyFastapiProcessor:
                 filename=filename_tuple[i],
             )
 
+        time_debug.append(time.time())
+
         face_tensor_list = [
             self.transform_from_array_to_tensor(arr_i) for arr_i in face_arr_list
         ]
         distance = self.infer_distance_given_face_tensor_list(face_tensor_list)
+
+        time_debug.append(time.time())
+
+        for i in range(len(time_debug) - 1):
+            time_diff = time_debug[i + 1] - time_debug[i]
+            time_diff = round(time_diff, 3)
+            print(
+                f"time{i}~{i+1} = {time_diff}"
+            )
 
         result_dict = {
             "error_code": 0,

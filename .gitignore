@@ -4,6 +4,7 @@
 /.idea
 /.env
 /output.log
+runs/*
 
 /a000_DATASET/*
 
