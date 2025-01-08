@@ -59,7 +59,7 @@ LOSS_FUNC_WEIGHT_D_AN_PENALTY = 0
 FASTAPI_UPLOAD_IMAGE_FOLDER = r"a003_fastapi/a001_images/a001_upload_images"
 FASTAPI_CROP_IMAGE_FOLDER = r"a003_fastapi/a001_images/a002_crop"
 FASTAPI_DEVICE = "cpu"
-FASTAPI_USING_DETECTION_METHOD = "mtcnn"  # also can choose deepface or opencv or yolov11
+FASTAPI_USING_DETECTION_METHOD = "yolov11"  # also can choose deepface or opencv or yolov11
 if FASTAPI_USING_DETECTION_METHOD == "yolov11":
     FASTAPI_DETECTION_YOLO_MODEL_PATH = r"a001_test/a009_yolo11/models/yolov11s-face.pt"
 FASTAPI_PORT = 8092
