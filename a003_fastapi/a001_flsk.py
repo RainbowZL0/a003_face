@@ -12,6 +12,15 @@ my_fastapi_processor = MyFastapiProcessor()
 @app.route("/facecomparsion", methods=["POST"])
 def face_comparison():
     try:
+        # print("----------------------------------------------------------------------------------------")
+        # print(request.method)
+        # print(request.headers)
+        # # print(request.get_json(silent=True))
+        # data = request.get_data(as_text=True)[:50]
+        # print(data)
+        # print(type(data))
+        # print("----------------------------------------------------------------------------------------")
+
         # 从请求中获取JSON数据并验证
         data = request.get_json()
         validated_data = ImagePairBase64Request(**data)

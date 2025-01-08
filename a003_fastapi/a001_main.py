@@ -62,8 +62,6 @@ def start():
         port=FASTAPI_PORT,
         reload=False,
         host="0.0.0.0",
-        workers=1,
-        limit_concurrency=1,
     )
 
 

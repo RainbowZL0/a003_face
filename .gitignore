@@ -13,6 +13,8 @@
 /a001_test/a003_facenet/a002_mtcnn_fail_crop/*
 /a001_test/a006_retina_face_test/a001_retinaface_success_crop
 /a001_test/a006_retina_face_test/a002_retinaface_fail_crop
+/a001_test/a009_yolo11/models/*
+/a001_test/a009_yolo11/input_images/*
 
 /a002_model/a003_training/saved_history/models/*
 /a002_model/a003_training/saved_history/validation/*
@@ -33,6 +35,8 @@
 !a001_test/a003_facenet/a002_mtcnn_fail_crop/.gitkeep
 !a001_test/a006_retina_face_test/a001_retinaface_success_crop/.gitkeep
 !a001_test/a006_retina_face_test/a002_retinaface_fail_crop/.gitkeep
+!/a001_test/a009_yolo11/models/.gitkeep
+!a001_test/a009_yolo11/input_images/.gitkeep
 
 !a002_model/a003_training/saved_history/models/.gitkeep
 !a002_model/a003_training/saved_history/validation/.gitkeep
