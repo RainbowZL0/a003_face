@@ -32,7 +32,8 @@ if __name__ == '__main__':
     results = model.predict(
         array_list,
         save=True,
-        project=OUTPUT_IMG_FOLDER
+        project=OUTPUT_IMG_FOLDER,
+        # device="cuda",
     )  # predict on an image
 
     resized_array_list = [ensure_max_side_for_hwc_bgr_uint8(arr_i) for arr_i in array_list]

@@ -16,8 +16,9 @@ def face_comparison():
         # print(request.method)
         # print(request.headers)
         # # print(request.get_json(silent=True))
-        # data = request.get_data(as_text=True)[:50]
-        # print(data)
+        # data = request.get_data(as_text=True)
+        # data_truncated = data[:50]
+        # print(data_truncated)
         # print(type(data))
         # print("----------------------------------------------------------------------------------------")
 

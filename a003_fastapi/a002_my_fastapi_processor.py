@@ -61,7 +61,10 @@ class MyFastapiProcessor:
                 cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
             )
         elif FASTAPI_USING_DETECTION_METHOD == "mtcnn":
-            self.mtcnn = MTCNN(thresholds=[0.4, 0.5, 0.5])
+            self.mtcnn = MTCNN(
+                thresholds=[0.4, 0.5, 0.5],
+                device=FASTAPI_DEVICE,
+            )
         elif FASTAPI_USING_DETECTION_METHOD == "yolov11":
             self.yolo = YOLO(FASTAPI_DETECTION_YOLO_MODEL_PATH)
         else:
@@ -322,7 +325,7 @@ class MyFastapiProcessor:
         rst_tensor: torch.Tensor = self.mtcnn(numpy_hwc_rgb_uint8)  # got tensor chw rgb -1~1 float
 
         if rst_tensor is not None:
-            rst_array: np.ndarray = rst_tensor.numpy()  # to numpy chw rgb -1~1 float
+            rst_array: np.ndarray = rst_tensor.cpu().numpy()  # to numpy chw rgb -1~1 float
             rst_array = rst_array.transpose(1, 2, 0)  # to numpy hwc rgb -1~1 float
             rst_array = cv2.cvtColor(rst_array, cv2.COLOR_RGB2BGR)  # to numpy hwc bgr -1~1 float
             rst_array = (rst_array * 128 + 127.5).astype(np.uint8)  # to numpy hwc bgr uint8
@@ -375,7 +378,11 @@ class MyFastapiProcessor:
         """
         传入arr类型为numpy hwc bgr uint8
         """
-        results = self.yolo.predict(arr, save=False)
+        results = self.yolo.predict(
+            arr,
+            save=False,
+            device=FASTAPI_DEVICE,
+        )
         result = results[0]
 
         # if no face was detected
@@ -506,6 +513,9 @@ def build_model_and_load_my_state_for_fastapi():
         model = convert_model_to_int8(model)
 
     model.load_state_dict(read_state["model_state"], strict=False)
+
+    if not FASTAPI_WITH_QUANTIZATION_MODEL:
+        model.to(FASTAPI_DEVICE)
 
     return model
 
