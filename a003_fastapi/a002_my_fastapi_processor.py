@@ -28,7 +28,7 @@ from a002_model.a001_utils.a000_CONFIG import (
     FASTAPI_DEVICE,
     FASTAPI_USING_DETECTION_METHOD,
     FASTAPI_USING_GRAY_IMAGE,
-    FASTAPI_WITH_QUANTIZATION_MODEL,
+    FASTAPI_WITH_QUANTIZATION_MODEL, FASTAPI_WHETHER_SAVE_RECEIVED_IMAGES,
 )
 
 if FASTAPI_USING_DETECTION_METHOD == "yolov11":
@@ -164,12 +164,13 @@ class MyFastapiProcessor:
         # time2
         time_debug.append(time.time())
 
-        for i in range(2):
-            save_hwc_bgr_to_png(
-                array=img_arr_list[i],
-                folder_path=FASTAPI_UPLOAD_IMAGE_FOLDER,
-                filename=filename_tuple[i],
-            )
+        if FASTAPI_WHETHER_SAVE_RECEIVED_IMAGES:
+            for i in range(2):
+                save_hwc_bgr_to_png(
+                    array=img_arr_list[i],
+                    folder_path=FASTAPI_UPLOAD_IMAGE_FOLDER,
+                    filename=filename_tuple[i],
+                )
 
         # time3
         time_debug.append(time.time())
@@ -188,12 +189,13 @@ class MyFastapiProcessor:
         # time4
         time_debug.append(time.time())
 
-        for i in range(2):
-            save_hwc_bgr_to_png(
-                array=face_arr_list[i],
-                folder_path=FASTAPI_CROP_IMAGE_FOLDER,
-                filename=filename_tuple[i],
-            )
+        if FASTAPI_WHETHER_SAVE_RECEIVED_IMAGES:
+            for i in range(2):
+                save_hwc_bgr_to_png(
+                    array=face_arr_list[i],
+                    folder_path=FASTAPI_CROP_IMAGE_FOLDER,
+                    filename=filename_tuple[i],
+                )
 
         # time5
         time_debug.append(time.time())

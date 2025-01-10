@@ -98,4 +98,4 @@ def start_every_given_seconds(interval=3600):
 
 
 if __name__ == "__main__":
-    start_every_given_seconds(3600)
+    start_every_given_seconds(500)
