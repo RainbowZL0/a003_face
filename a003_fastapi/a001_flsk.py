@@ -38,7 +38,7 @@ def run_flask_server():
     app.run(
         host="0.0.0.0",
         port=FLASK_PORT,
-        threaded=False  # 确保单线程处理请求
+        # threaded=False  # 确保单线程处理请求
     )
 
 
