@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
-from a002_model.a001_utils.a000_CONFIG import FLASK_PORT
+from a000_CONFIG import FLASK_PORT
 from a003_fastapi.a002_my_fastapi_processor import MyFastapiProcessor
 from a003_fastapi.a003_class_image_pair_base64 import ImagePairBase64Request
 

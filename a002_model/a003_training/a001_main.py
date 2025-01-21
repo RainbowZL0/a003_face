@@ -1,17 +1,12 @@
-import os
-
-from a002_model.a001_utils.a000_CONFIG import (
+from a000_CONFIG import (
     DATASET_SF_TL54_PATH,
     TRAINING_NUM_SAMPLES_PER_EPOCH,
     DATASET_SF_TL54_CROPPED_PATH,
     TRAINING_DETECTOR_NAME,
-    VALI_LOG_FOLDER,
-    VALI_ANALYZE_USING_DETAILED_RESULT_JS_NAME,
 )
 from a002_model.a003_training.a002_DatasetForTraining import DatasetForTrainingAndVali
 from a002_model.a003_training.a003_MyTrainingObj import (
     MyTrainingObj,
-    analyze_detailed_result_to_get_cosine_similarity_distribution,
 )
 
 

@@ -17,7 +17,7 @@ from tqdm import tqdm
 from copy import deepcopy
 
 from a002_DatasetForTestOrVali import DatasetForTestOrVali
-from a002_model.a001_utils.a000_CONFIG import TEST_BATCH_SIZE, TEST_FINAL_CONFUSION_MATRIX_PATH, TEST_LOG_PATH, \
+from a000_CONFIG import TEST_BATCH_SIZE, TEST_FINAL_CONFUSION_MATRIX_PATH, TEST_LOG_PATH, \
     TEST_MODEL_NAME, TEST_DETECTOR_NAME, LOGGER, TEST_DEVICE, TEST_RESULT_RECORDER_PATH
 from a002_model.a001_utils.a002_general_utils import (
     my_collate_fn_factory,

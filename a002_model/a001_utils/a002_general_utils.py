@@ -16,7 +16,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from torch.nn import functional
 
-from a002_model.a001_utils.a000_CONFIG import (
+from a000_CONFIG import (
     DPI,
     TEST_NUM_SAMPLES_PER_EPOCH,
     DATASET_SF_TL54_PATH, LOGGER, FASTAPI_INFERENCE_WITH_MAX_IMAGE_SIDE,

@@ -3,7 +3,7 @@ from colorama import Fore
 from fastapi import FastAPI, UploadFile, File, Body
 from uvicorn import run
 
-from a002_model.a001_utils.a000_CONFIG import FASTAPI_PORT
+from a000_CONFIG import FASTAPI_PORT
 from a003_fastapi.a002_my_fastapi_processor import MyFastapiProcessor
 from a003_fastapi.a003_class_image_pair_base64 import ImagePairBase64Request
 
@@ -50,7 +50,7 @@ def upload_image_pair_and_verify(
 
 
 def start():
-    from a002_model.a001_utils.a000_CONFIG import LOGGER
+    from a000_CONFIG import LOGGER
 
     LOGGER.info(
         Fore.GREEN

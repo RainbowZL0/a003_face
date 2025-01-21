@@ -11,7 +11,7 @@ from torch.quantization import (
     convert,
 )
 
-from a002_model.a001_utils.a000_CONFIG import TRAINING_INITIAL_LR
+from a000_CONFIG import TRAINING_INITIAL_LR
 
 
 class MyFacenetModel(InceptionResnetV1):

@@ -16,7 +16,7 @@ def test_cosine_similarity():
 
 
 def test_dataset_for_training_obj():
-    from a002_model.a001_utils.a000_CONFIG import (
+    from a000_CONFIG import (
         DATASET_SF_TL54_PATH,
         DATASET_SF_TL54_CROPPED_PATH,
         TRAINING_DETECTOR_NAME, )
@@ -35,7 +35,7 @@ def test_dataset_for_training_obj():
 
 
 def test_my_training_obj():
-    from a002_model.a001_utils.a000_CONFIG import (
+    from a000_CONFIG import (
         DATASET_SF_TL54_PATH,
         DATASET_SF_TL54_CROPPED_PATH,
         TRAINING_DETECTOR_NAME, TRAINING_NUM_SAMPLES_PER_EPOCH,

@@ -17,7 +17,7 @@ from torchvision.io import read_image
 from torchvision.transforms import v2
 from tqdm import tqdm
 
-from a002_model.a001_utils.a000_CONFIG import (
+from a000_CONFIG import (
     TRAINING_INITIAL_LR,
     TRAINING_MINIMUM_LR,
     TRAINING_TOTAL_EPOCHS,

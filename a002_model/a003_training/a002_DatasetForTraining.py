@@ -10,7 +10,7 @@ from deepface import DeepFace
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from a002_model.a001_utils.a000_CONFIG import VALI_SAMPLES_NUM, LOGGER
+from a000_CONFIG import VALI_SAMPLES_NUM, LOGGER
 from a002_model.a001_utils.a001_data_dict import DatasetDictObj
 from a002_model.a001_utils.a002_general_utils import (
     save_to_json,

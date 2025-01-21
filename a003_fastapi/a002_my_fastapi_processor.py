@@ -18,7 +18,7 @@ from fastapi import UploadFile, File
 from torchvision.transforms import v2
 from ultralytics import YOLO
 
-from a002_model.a001_utils.a000_CONFIG import (
+from a000_CONFIG import (
     FASTAPI_LOG_JSON_FILE_PATH,
     FASTAPI_UPLOAD_IMAGE_FOLDER,
     LOGGER,
@@ -32,7 +32,7 @@ from a002_model.a001_utils.a000_CONFIG import (
 )
 
 if FASTAPI_USING_DETECTION_METHOD == "yolov11":
-    from a002_model.a001_utils.a000_CONFIG import FASTAPI_DETECTION_YOLO_MODEL_PATH
+    from a000_CONFIG import FASTAPI_DETECTION_YOLO_MODEL_PATH
 
 from a002_model.a001_utils.a002_general_utils import (
     my_distance_func,

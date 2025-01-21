@@ -3,7 +3,7 @@ import random
 from rich.pretty import pprint
 from torch.utils.data import DataLoader
 
-from a002_model.a001_utils.a000_CONFIG import (
+from a000_CONFIG import (
     DATASET_SF_TL54_PATH,
     TEST_BATCH_SIZE,
 )
