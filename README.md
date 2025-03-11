@@ -21,3 +21,14 @@ pip3 install --only-binary :all: insightface
  python ./a003_fastapi/a001_main.py
  ```
  若要挂在后台运行，可将第二条命令改为 "nohup python ./a002_main/a004_fastapi/a001_main.py > output.log 2>&1 &"
+# 使用说明
+可调整的参数在CONFIG.py中修改。
+
+仓库结构:
+1. a001_test 一些新特性的demo，开发过程中测试使用。
+2. a002_model 模型定义、训练、测试。
+   1. a001_utils 被多次复用的工具。其中data_dict.py用于读取数据集的所有图像路径。general_utils.py是处理数据的工具。logger.py用于自定义输出日志的格式。
+   2. a002_batch_test 测试模型。
+   3. a003_training 训练模型。
+3. a003_fastapi 搭建服务。
+4. a004_add_data_label 一个尚在开发中的图形界面，用于标注人脸数据。

@@ -2,14 +2,17 @@ from a002_model.a001_utils.a003_logger import build_logger_with_handler
 
 LOGGER = build_logger_with_handler()
 
-DPI = 300
+DPI = 300  # 所有被显示的图像的DPI设置
 
+# Dataset路径，用于train, validation, test
 DATASET_SF_TL54_PATH = r"./a000_DATASET/SF-TL54/"
 DATASET_SF_TL54_CROPPED_PATH = r"./a000_DATASET/SF-TL54_CROPPED/"
 
+# 人脸检测和向量表示步骤，可用的模型列表
 MODEL_NAME_LIST = ["Facenet512", "ArcFace"]
 DETECTOR_NAME_LIST = ["mtcnn", "retinaface", "opencv"]
 
+# test设定
 TEST_DEVICE = "cpu"
 TEST_BATCH_SIZE = 1
 TEST_NUM_SAMPLES_PER_EPOCH = 5000
@@ -23,6 +26,7 @@ TEST_FINAL_CONFUSION_MATRIX_PATH = (
     rf"{TEST_LOG_PATH}/{TEST_MODEL_NAME}_{TEST_DETECTOR_NAME}_confusion-matrix.json"
 )
 
+# 训练设定
 TRAINING_OR_VALI_DEVICE = "cuda"
 TRAINING_NUM_SAMPLES_PER_EPOCH = 10000
 TRAINING_DETECTOR_NAME = DETECTOR_NAME_LIST[1]
@@ -41,21 +45,26 @@ TRAINING_OR_VALI_WITH_QUANTIZATION = False
 
 TRAINING_WHETHER_USING_SAVED_STATE = False
 
+# 加载人脸向量表示模型的路径
 LOAD_FROM_STATE_PATH = (
     r"a002_model/a003_training/saved_history/models"
     r"/2025-01-02_13-43-19_epochs-2_iters-up-to-now-312.pth"
 )
 
+# validation设定
 VALI_SAMPLES_NUM = 5000
 VALI_BATCH_SIZE = 64
 TRAINING_VALI_INTERVAL_IN_ITERS = 200
 VALI_LOG_FOLDER = r"./a002_model/a003_training/saved_history/validation"
 VALI_ANALYZE_USING_DETAILED_RESULT_JS_NAME = "---------.json"
+
+# loss函数设定
 LOSS_FUNC_MARGIN = 0.6  # 负样本距离减去正样本距离小于MARGIN的组需要学习，距离取值在0~2之间
 LOSS_FUNC_SWAP = True
 LOSS_FUNC_USING_SELF_DEFINED = False
 LOSS_FUNC_WEIGHT_D_AN_PENALTY = 0
 
+# 服务器运行设定
 FASTAPI_UPLOAD_IMAGE_FOLDER = r"a003_fastapi/a001_images/a001_upload_images"
 FASTAPI_CROP_IMAGE_FOLDER = r"a003_fastapi/a001_images/a002_crop"
 FASTAPI_DEVICE = "cpu"
@@ -71,4 +80,5 @@ FASTAPI_WHETHER_SAVE_RECEIVED_IMAGES = False
 
 FLASK_PORT = 8092
 
+# 距离的阈值，用于判断是否为同一人，距离的取值范围为0~2
 DISTANCE_THRESHOLD = 0.5  # a float, 0~2
