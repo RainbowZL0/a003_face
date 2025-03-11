@@ -32,3 +32,7 @@ pip3 install --only-binary :all: insightface
    3. a003_training 训练模型。
 3. a003_fastapi 搭建服务。
 4. a004_add_data_label 一个尚在开发中的图形界面，用于标注人脸数据。
+
+处理流程:
+
+![img.png](img.png)
